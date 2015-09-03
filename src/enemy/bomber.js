@@ -14,6 +14,21 @@ RAPT.Bomber = function (center, angle) {
 	else if (angle < Math.PI * 1.25) this.setVelocity(new RAPT.Vector(-RAPT.BOMBER_SPEED, 0));
 	else if (angle < Math.PI * 1.75) this.setVelocity(new RAPT.Vector(0, -RAPT.BOMBER_SPEED));
 	else this.setVelocity(new RAPT.Vector(RAPT.BOMBER_SPEED, 0));
+
+	this.sprite =  new RAPT.SpriteGroup({
+		name:'bomber',
+		material:RAPT.MAT_ENEMY,
+		size : 1,
+		nuv:16,
+		uvs:[[5,0], [6,0]],
+		color:0XFFCC00,
+
+		list:['p1', 'p2'],
+		sizes: [ [0.8,0.8] ]
+		//pos:[[-0.2,-0.2], [0.2,0.2]]
+	});
+
+	this.sprite.moveto(center);
 }
 
 //RAPT.Bomber.prototype = new RAPT.SpawningEnemy;
@@ -45,16 +60,18 @@ RAPT.Bomber.prototype.spawn = function() {
 
 RAPT.Bomber.prototype.afterTick = function() {
 	// drawing stuff
+	var pos = this.getCenter();
+	this.sprite.moveto(pos);
 };
 
 RAPT.Bomber.prototype.onDeath = function() {
+	this.sprite.remove();
 	RAPT.Bomb.prototype.onDeath.call(this);
-	
 	RAPT.gameState.incrementStat(RAPT.STAT_ENEMY_DEATHS);
 };
 
 RAPT.Bomber.prototype.draw = function(c) {
-	var pos = this.getCenter();
+	/*var pos = this.getCenter();
 	c.strokeStyle = 'black';
 	c.beginPath();
 	c.moveTo(pos.x - 0.25, pos.y - 0.2);
@@ -74,5 +91,5 @@ RAPT.Bomber.prototype.draw = function(c) {
 	c.fillStyle = 'black';
 	c.beginPath();
 	c.arc(pos.x, pos.y - RAPT.BOMBER_HEIGHT * 0.5, RAPT.BOMB_RADIUS * this.getReloadPercentage(), 0, 2*Math.PI, false);
-	c.fill();
+	c.fill();*/
 };
