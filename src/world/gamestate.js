@@ -253,6 +253,30 @@ RAPT.GameState.prototype = {
 		c.arc(point.x, point.y - 0.45, 0.2, 0, Math.PI, true);
 		c.fill();
 	},
+	addSpawnPoint:function(center){
+		var start =  new RAPT.SpriteGroup({
+			name:'start',
+			material:RAPT.MAT_ENEMY,
+			size : 1,
+			nuv:16,
+			uvs:[[15,1]],
+			list:['p1'],
+			sizes: [ [2,2]  ]
+		});
+		start.move(center.x+0.5, center.y+0.5);
+	},
+	addGoal:function(center){
+		var end =  new RAPT.SpriteGroup({
+			name:'end',
+			material:RAPT.MAT_ENEMY,
+			size : 1,
+			nuv:16,
+			uvs:[[14,1]],
+			list:['p1'],
+			sizes: [ [1,1]  ]
+		});
+		end.move(center.x+0.5, center.y+0.5);
+	},
 	drawGoal : function (c, point, time) {
 		var percent = time - Math.floor(time);
 		percent = 1 - percent;
@@ -361,6 +385,11 @@ RAPT.GameState.prototype = {
 
 		this.playerA.add3d();
 		this.playerB.add3d();
+
+		this.addSpawnPoint(start);
+		this.addGoal(end);
+
+
 		
 		// Load entities
 		for (var i = 0; i < json['entities'].length; ++i) {
