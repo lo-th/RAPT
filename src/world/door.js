@@ -78,9 +78,9 @@ RAPT.Door.prototype = {
         }
 
 		this.d[i].position.set(x+0.5,y+0.5, 0 );
-		if(color==1) this.d[i].material.color.setHex(0xFF0000);
-		else if(color==2)this.d[i].material.color.setHex(0x0055FF);
-		else this.d[i].material.color.setHex(0x333333);
+		if(color==1) this.d[i].material = RAPT.MAT_DOOR_R;
+		else if(color==2)this.d[i].material = RAPT.MAT_DOOR_B
+		else this.d[i].material = RAPT.MAT_DOOR;
 		//RAPT.W3D.scene.add(this.d[i]);
 
 		RAPT.W3D.addDoor(this.d[i]);

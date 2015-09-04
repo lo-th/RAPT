@@ -42,10 +42,8 @@ RAPT.Laser.prototype.reactToWorld = function(contact) {
 			RAPT.Particle().position(position).velocity(direction).angle(angle).radius(0.1).bounces(1).elasticity(1).decay(0.01).gravity(0).color(1, 1, 1, 1).line();
 		}
 	} else {
-		
 		--this.bouncesLeft;
 	}
-	//
 };
 
 

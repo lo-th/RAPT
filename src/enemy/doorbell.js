@@ -68,30 +68,8 @@ RAPT.Doorbell.prototype.reactToPlayer = function(player) {
 	for (var i = 0; i < 50; ++i) {
 		var rotationAngle = RAPT.randInRange(0, 2 * Math.PI);
 		var direction = new RAPT.Vector().fromAngle(rotationAngle).mul(RAPT.randInRange(3, 5));
-		RAPT.Particle().position(this.getCenter()).velocity(direction).angle(rotationAngle).radius(0.1).bounces(3).elasticity(0.5).decay(0.01).line().color(1, 1, 1, 1);
+		RAPT.Particle().position(this.getCenter()).velocity(direction).angle(rotationAngle).radius(0.1).bounces(3).elasticity(0.5).decay(0.01).line().color(1, 1, 1, 1).fixangle();
 	}
 
 	this.rotationPercent = 0;
-}
-
-RAPT.Doorbell.prototype.draw = function(c) {
-	/*if (this.visible) {
-		var pos = this.getCenter();
-		var startingAngle = this.restingAngle + (2 * Math.PI / 3) / (this.rotationPercent + 0.1);
-
-		c.fillStyle = 'white';
-		c.strokeStyle = 'black';
-		c.beginPath();
-		c.arc(pos.x, pos.y, RAPT.DOORBELL_RADIUS, 0, 2 * Math.PI, false);
-		c.fill();
-		c.stroke();
-
-		c.beginPath();
-		for (var i = 0; i < RAPT.DOORBELL_SLICES; ++i) {
-			c.moveTo(pos.x, pos.y);
-			var nextPos = pos.add(new RAPT.Vector().fromAngle(startingAngle + (i - 0.5) * (2 * Math.PI / RAPT.DOORBELL_SLICES)).mul(RAPT.DOORBELL_RADIUS));
-			c.lineTo(nextPos.x, nextPos.y);
-		}
-		c.stroke();
-	}*/
 }

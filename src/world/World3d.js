@@ -40,6 +40,8 @@ RAPT.World3D = function(canvas){
     textures[1] = THREE.ImageUtils.loadTexture( 'textures/particle.png' );
     textures[2] = THREE.ImageUtils.loadTexture( 'textures/player.png' );
     textures[3] = THREE.ImageUtils.loadTexture( 'textures/enemy.png' );
+    textures[4] = THREE.ImageUtils.loadTexture( 'textures/level.png' );
+    textures[4].flipY =false;
 
     var i = textures.length;
     while(i--){
@@ -50,6 +52,12 @@ RAPT.World3D = function(canvas){
 
     // create materials
     RAPT.MAT_LEVEL = new THREE.MeshBasicMaterial( { map:textures[0], color: 0xFFFFFF, shading: THREE.FlatShading, wireframe: false, transparent: true} );
+
+    RAPT.MAT_DOOR_R = new THREE.MeshBasicMaterial( { map:textures[4], color: 0xFF0000, shading: THREE.FlatShading, wireframe: false, transparent: true} );
+    RAPT.MAT_DOOR_B = new THREE.MeshBasicMaterial( { map:textures[4], color: 0x0066FF, shading: THREE.FlatShading, wireframe: false, transparent: true} );
+    RAPT.MAT_DOOR = new THREE.MeshBasicMaterial( { map:textures[4], color: 0xFFFFFF, shading: THREE.FlatShading, wireframe: false, transparent: true} );
+    //   RAPT.MAT_LEVEL = new THREE.MeshBasicMaterial( { map:textures[0], color: 0xFFFFFF, shading: THREE.FlatShading, wireframe: false, transparent: true} );
+
     RAPT.MAT_PLAYER = new THREE.MeshBasicMaterial( { map: textures[2], shading: THREE.FlatShading, wireframe: false, transparent: true, side:THREE.DoubleSide, alphaTest: 0.1 } );
     RAPT.MAT_ENEMY = new THREE.MeshBasicMaterial( { map: textures[3], shading: THREE.FlatShading, wireframe: false, transparent: true, side:THREE.DoubleSide, alphaTest: 0.1 } );
  
