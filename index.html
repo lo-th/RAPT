@@ -81,15 +81,13 @@ canvas { position: absolute; top:0; left:0; pointer-events:auto; width:100%; hei
 
 </head>
 <body>
-
-<canvas id="canvas"></canvas>
 <canvas id="canvas_3D"></canvas>
 <div id="list"></div>
 <div id="debug"></div>
 <div id="message">RAPT v0.1</div>
 <a href="https://github.com/lo-th/RAPT"><img style="position: absolute; top: 0; right: 0; border: 0;" src="textures/ribbon.png"></a>
-<script type="text/javascript">
 
+<script type="text/javascript">
 var levelsList = [
 "Intro 1","Intro 2","Intro 3","Intro 4","It's Okay, You Can Press Escape","Doomed","Mr. Four-Arms","Chain","Traps","Walk Through Walls",
 "My Head 'Asplode","No Cover","Hunter Food","Run!","Shocker","Laserland","Up and Down","Leap Of Faith","Sandwiched", "Clock Tower","Stick Together",
@@ -110,14 +108,14 @@ function loadAsset() {
 
 function initGame() {
 
-    w3d = new RAPT.World3D(document.getElementById( 'canvas_3D' ));
-    level = new RAPT.Level(document.getElementById( 'canvas' ), window.innerWidth, window.innerHeight, document.getElementById( 'message' ));
-    //initList();
+    w3d = new RAPT.World3D( document.getElementById( 'canvas_3D' ));
+    level = new RAPT.Level( window.innerWidth, window.innerHeight, document.getElementById( 'message' ));
+
     initListNum();
     //level.load("Intro 1");
     level.load(levelsList[current]);
-    setInterval(tick, fps);
 
+    //setInterval(tick, fps);
     animate();
 };
 
@@ -142,20 +140,6 @@ function initListNum(){
     }
 };
 
-function initList(){
-    var list = document.getElementById('list');
-    var bStyle = " width:100px; height:12px; cursor:pointer; border:1px solid #FF0000; text-align:center; padding:2px;"
-    for(var i = 0;i<levelsList.length; i++){
-        var b = document.createElement('div');
-        b.style.cssText = bStyle;
-        b.name = levelsList[i];
-        b.innerHTML = b.name;
-        b.addEventListener('click',  function ( e ) {  e.preventDefault(); level.load(this.name); }, false);
-        list.appendChild( b );
-    }
-};
-
-
 window.onresize = function(e) {
     var w = window.innerWidth;
     var h =  window.innerHeight;
@@ -178,6 +162,7 @@ function tick() {
 }
 
 function animate() {
+    level.tick();
     w3d.render();
     requestAnimationFrame( animate );
 }

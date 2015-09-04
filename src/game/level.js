@@ -3,15 +3,18 @@
 RAPT.MESSAGE = null;
 //RAPT.LEVEL = null;
 
-RAPT.Level = function (canvas, w, h, message) {
+RAPT.Level = function ( w, h, message) {
     //this.w3d = w3d;
 
     RAPT.MESSAGE = message;
 
-    this.canvas = canvas; //document.getElementById("canvas");
+    this.w = w;
+    this.h = h;
+
+    /*this.canvas = canvas; //document.getElementById("canvas");
     this.canvas.width = w;
     this.canvas.height = h;
-    this.context = this.canvas.getContext('2d');
+    this.context = this.canvas.getContext('2d');*/
     this.lastTime = new Date();
     //this.game = null;
     this.json = null;
@@ -22,9 +25,8 @@ RAPT.Level = function (canvas, w, h, message) {
 RAPT.Level.prototype = {
     constructor: RAPT.Level,
     resize: function(w,h){
-        this.canvas.width = w;
-        this.canvas.height = h;
-        //this.game.resize(w,h);
+        this.w = w;
+        this.h = h;
         RAPT.game.resize(w,h);
     },
     tick : function() {
@@ -56,7 +58,7 @@ RAPT.Level.prototype = {
         RAPT.Particle.reset();
         RAPT.game = new RAPT.Game();
         
-        RAPT.game.resize(this.canvas.width, this.canvas.height);
+        RAPT.game.resize(this.w, this.h);
         RAPT.gameState.loadLevelFromJSON(this.json);
     },
     parseLevel : function(j) {

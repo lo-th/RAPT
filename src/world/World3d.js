@@ -117,11 +117,14 @@ RAPT.World3D = function(canvas){
     this.scene.add( this.player[0] );
     this.scene.add( this.player[1] );*/
 
-    this.renderer = new THREE.WebGLRenderer( { precision:"mediump", canvas:canvas, antialias: true,  alpha: false, stencil:false } );
-    this.renderer.setClearColor( 0x737373 , 1.0);
+    //this.renderer = new THREE.WebGLRenderer( { precision:"mediump", canvas:canvas, antialias: true,  alpha: false, stencil:false } );
+    this.renderer = new THREE.WebGLRenderer( { precision:"mediump", canvas:canvas, antialias: true,  alpha: false } );
     this.renderer.setPixelRatio( window.devicePixelRatio );
     this.renderer.setSize( this.vs.w, this.vs.h );
-    this.renderer.autoClear = false;
+    this.renderer.setClearColor( 0x737373 , 1.0);
+    
+    
+    //this.renderer.autoClear = false;
 
     //this.testMerge();
 
@@ -143,6 +146,27 @@ RAPT.World3D.prototype = {
         this.player[1].position.set(p1.x, p1.y, 0);
     },*/
     //initLevel:function(json){
+    render: function(){
+
+       // this.renderer.clear();
+        // update particle engine
+        RAPT.Particle.update();
+
+        if(!this.split){
+            
+            this.renderer.render( this.scene, this.camera[0] );
+            //debug.innerHTML = 'C0 x ' + this.camera[0].position.x.toFixed(0) + ' y ' + this.camera[0].position.y.toFixed(0)+ '<br>';
+        }else{
+            //this.renderer.clear();
+            //RAPT.Particle.up();
+            //this.renderer.clear();
+            this.effect.render( this.scene, this.camera[1], this.camera[2] );
+            //debug.innerHTML = 'C1 x ' + this.camera[1].position.x.toFixed(0) + ' y ' + this.camera[1].position.y.toFixed(0)+ '<br>';
+            //debug.innerHTML += 'C2 x ' + this.camera[2].position.x.toFixed(0) + ' y ' + this.camera[2].position.y.toFixed(0)+ '<br>';
+        }
+
+        //renderer.clearDepth();
+    },
     addDoor:function(mesh){
        this.scene.add(mesh);
        this.doors.push(mesh);
@@ -472,27 +496,7 @@ RAPT.World3D.prototype = {
         this.scene.add(this.edgemesh);
 
     },
-    render: function(){
-
-        this.renderer.clear();
-        // update particle engine
-        RAPT.Particle.update();
-
-        if(!this.split){
-            
-            this.renderer.render( this.scene, this.camera[0] );
-            //debug.innerHTML = 'C0 x ' + this.camera[0].position.x.toFixed(0) + ' y ' + this.camera[0].position.y.toFixed(0)+ '<br>';
-        }else{
-            //this.renderer.clear();
-            //RAPT.Particle.up();
-            //this.renderer.clear();
-            this.effect.render( this.scene, this.camera[1], this.camera[2] );
-            //debug.innerHTML = 'C1 x ' + this.camera[1].position.x.toFixed(0) + ' y ' + this.camera[1].position.y.toFixed(0)+ '<br>';
-            //debug.innerHTML += 'C2 x ' + this.camera[2].position.x.toFixed(0) + ' y ' + this.camera[2].position.y.toFixed(0)+ '<br>';
-        }
-
-        //renderer.clearDepth();
-    },
+    
     tell:function(txt){
         debug.innerHTML = txt;
     },
@@ -680,16 +684,16 @@ RAPT.SplitEffect = function ( renderer, width, height ) {
     };
 
     this.render = function ( scene, c0, c1 ) {
-        renderer.clear();
+        //renderer.clear();
         //c0.updateProjectionMatrix();
         //if(RAPT.W3D.edgemesh)RAPT.W3D.edgemesh.material = RAPT.MAT_TEST;
-        scene.updateMatrixWorld();
+        //scene.updateMatrixWorld();
         renderer.render( scene, c0, _renderTargetL, true );
-        scene.updateMatrixWorld();
+        //scene.updateMatrixWorld();
         //c1.updateProjectionMatrix();
         //if(RAPT.W3D.edgemesh)RAPT.W3D.edgemesh.material = RAPT.MAT_TEST2;
         renderer.render( scene, c1, _renderTargetR, true );
-        _scene.updateMatrixWorld();
+        //_scene.updateMatrixWorld();
         renderer.render( _scene, _camera );
 
     };
