@@ -1,6 +1,13 @@
 //_____________________________LEVEL
 
 RAPT.MESSAGE = null;
+RAPT.LEVELS = [
+"Intro 1","Intro 2","Intro 3","Intro 4","It's Okay, You Can Press Escape","Doomed","Mr. Four-Arms","Chain","Traps","Walk Through Walls",
+"My Head 'Asplode","No Cover","Hunter Food","Run!","Shocker","Laserland","Up and Down","Leap Of Faith","Sandwiched", "Clock Tower","Stick Together",
+"Foursquare","Going Down Faster","Bomberland","Coordinated Panic","Going Down","Look But Don't Touch","Triple Threat",
+"Better Keep Moving","Tour","Cube"
+];
+
 //RAPT.LEVEL = null;
 
 RAPT.Level = function ( w, h, message) {

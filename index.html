@@ -6,35 +6,33 @@
 <style>
 *{ padding:0; margin: 0; -o-user-select:none; -ms-user-select:none; -khtml-user-select:none; -webkit-user-select:none; -moz-user-select: none;}
 html { width:100%; height:100%; }
-body { background:#7F7F7F; font-size:11px; width:100%; height:100%; color:#FFFFFF; overflow: hidden; margin: 0px; font-family: Monospace;}
+body {  font-family: Monospace; font-size:11px; width:100%; height:100%; color:#FFFFFF; overflow: hidden; margin:0; padding:0; background:#737373;}
 canvas { position: absolute; top:0; left:0; pointer-events:auto; width:100%; height:100%;}
 #list { position:absolute; bottom:10px; left:50px; width:100%; height:16px; }
 #message { font-size:14px; position:absolute; top:10px; left:10px; width:400px; height:200px; }
 #debug {position:absolute; bottom:10px; left:10px; width:100px; height:12px; pointer-events:none; }
 </style>
 
+<!-- 3D libs -->
 <script src="js/three.min.js"></script>
 <script src="js/sea3d/SEA3D.js"></script>
 <script src="js/sea3d/SEA3DLZMA.js"></script>
 <script src="js/sea3d/SEA3DLoader.js"></script>
 
+<!-- game root -->
 <script src="src/game/game.js"></script>
 <script src="src/game/level.js"></script>
-<!--<script src="src/game/camera.js"></script>
-<script src="src/game/backgroundcache.js"></script>-->
 <script src="src/game/keys.js"></script>
 <script src="src/game/playerstats.js"></script>
 
-<script src="src/util/cog.js"></script>
-<script src="src/util/keyframe.js"></script>
-<script src="src/util/math.js"></script>d
-<script src="src/util/Shader.js"></script>
-
-<script src="src/world/World3d.js"></script>
-
-<script src="src/util/sprite.js"></script>
+<!-- utils -->
 <script src="src/util/SpriteGroup.js"></script>
+<script src="src/util/Shader.js"></script>
+<script src="src/util/keyframe.js"></script>
+<script src="src/util/math.js"></script>
+<script src="src/util/cog.js"></script>
 
+<!-- physics -->
 <script src="src/collisions/collisiondetection.js"></script>
 <script src="src/collisions/edgequad.js"></script>
 <script src="src/collisions/aabb.js"></script>
@@ -42,6 +40,7 @@ canvas { position: absolute; top:0; left:0; pointer-events:auto; width:100%; hei
 <script src="src/collisions/polygon.js"></script>
 <script src="src/collisions/segment.js"></script>
 
+<!-- game world -->
 <script src="src/world/cell.js"></script>
 <script src="src/world/door.js"></script>
 <script src="src/world/edge.js"></script>
@@ -50,7 +49,9 @@ canvas { position: absolute; top:0; left:0; pointer-events:auto; width:100%; hei
 <script src="src/world/enemy.js"></script>
 <script src="src/world/player.js"></script>
 <script src="src/world/particle.js"></script>
+<script src="src/world/World3d.js"></script>
 
+<!-- enemy -->
 <script src="src/enemy/rocket.js"></script>
 <script src="src/enemy/bomb.js"></script>
 <script src="src/enemy/bomber.js"></script>
@@ -81,25 +82,16 @@ canvas { position: absolute; top:0; left:0; pointer-events:auto; width:100%; hei
 
 </head>
 <body>
-<canvas id="canvas_3D"></canvas>
+<canvas id="canvas"></canvas>
 <div id="list"></div>
 <div id="debug"></div>
 <div id="message">RAPT v0.1</div>
 <a href="https://github.com/lo-th/RAPT"><img style="position: absolute; top: 0; right: 0; border: 0;" src="textures/ribbon.png"></a>
 
 <script type="text/javascript">
-var levelsList = [
-"Intro 1","Intro 2","Intro 3","Intro 4","It's Okay, You Can Press Escape","Doomed","Mr. Four-Arms","Chain","Traps","Walk Through Walls",
-"My Head 'Asplode","No Cover","Hunter Food","Run!","Shocker","Laserland","Up and Down","Leap Of Faith","Sandwiched", "Clock Tower","Stick Together",
-"Foursquare","Going Down Faster","Bomberland","Coordinated Panic","Going Down","Look But Don't Touch","Triple Threat",
-"Better Keep Moving","Tour","Cube"
-];
 
-var fps = 1e3/60;
-var level = null;
-var w3d = null;
-var current = 0;
-//console.log(Math.PI*0.5)
+var fps = 1e3/60, level, w3d, current = 0, isApart = true;
+
 window.onload = loadAsset;
 
 function loadAsset() {
@@ -108,33 +100,36 @@ function loadAsset() {
 
 function initGame() {
 
-    w3d = new RAPT.World3D( document.getElementById( 'canvas_3D' ));
+    w3d = new RAPT.World3D( document.getElementById( 'canvas' ));
     level = new RAPT.Level( window.innerWidth, window.innerHeight, document.getElementById( 'message' ));
 
-    initListNum();
-    //level.load("Intro 1");
-    level.load(levelsList[current]);
+    initList();
+    level.load(RAPT.LEVELS[current]);
 
-    //setInterval(tick, fps);
-    animate();
+    if(isApart){
+        setInterval(tick, fps);
+        animateOnly();
+    } else {
+        animate();
+    }
 };
 
 function playNext(){
     current++;
-    if(current == levelsList.length) current = 0;
-    level.load(levelsList[current]);
+    if(current == RAPT.LEVELS.length) current = 0;
+    level.load(RAPT.LEVELS[current]);
 };
 
-function initListNum(){
+function initList(){
     var list = document.getElementById('list');
     var bStyle = " width:12px; height:12px; cursor:pointer; border:1px solid #444; background:#666; text-align:center; padding:2px; margin:2px; display:inline-block; "
-    for(var i = 0;i<levelsList.length; i++){
+    for(var i = 0;i<RAPT.LEVELS.length; i++){
         var b = document.createElement('div');
         b.style.cssText = bStyle;
         b.name = i;
         b.innerHTML = i;//b.name;
-        b.addEventListener('click',  function ( e ) {  level.load( levelsList[this.name] );  e.preventDefault();}, false);
-        b.addEventListener('mouseover',  function ( e ) {  this.style.background= '#FF8800'; document.getElementById( 'message' ).innerHTML = levelsList[this.name]; }, false);
+        b.addEventListener('click',  function ( e ) {  level.load( RAPT.LEVELS[this.name] );  e.preventDefault();}, false);
+        b.addEventListener('mouseover',  function ( e ) {  this.style.background= '#FF8800'; document.getElementById( 'message' ).innerHTML = RAPT.LEVELS[this.name]; }, false);
         b.addEventListener('mouseout',  function ( e ) {  this.style.background= '#666';}, false);
         list.appendChild( b );
     }
@@ -147,25 +142,26 @@ window.onresize = function(e) {
     level.resize(w,h);
 };
 
-document.onkeydown = function(e) {
-    e = e || window.event;
-    level.keyDown(e);
-};
+document.onkeydown = function(e) {  e = e || window.event; level.keyDown(e); };
+document.onkeyup = function(e) { e = e || window.event; level.keyUp(e); };
 
-document.onkeyup = function(e) {
-    e = e || window.event;
-    level.keyUp(e);
-}
+// -----------------------------
 
 function tick() {
     level.tick();
-}
+};
+function animateOnly() {
+    w3d.render();
+    requestAnimationFrame( animateOnly );
+};
+
+// ----------------------------
 
 function animate() {
     level.tick();
     w3d.render();
     requestAnimationFrame( animate );
-}
+};
 
 </script>
 </body>

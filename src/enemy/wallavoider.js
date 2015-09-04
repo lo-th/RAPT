@@ -8,26 +8,21 @@ RAPT.WallAvoider = function (center, target) {
 	this.acceleration = new RAPT.Vector(0, 0);
 	this.angularVelocity = 0;
 
-	this.bodySprite = new RAPT.Sprite();
-	this.bodySprite.drawGeometry = function(c) {
-		c.beginPath(); c.arc(0, 0, 0.1, 0, 2*Math.PI, false); c.fill(); c.stroke();
-		c.beginPath();
-		for(var i = 0; i < 4; i++)
-		{
-			var angle = i * (2*Math.PI / 4);
-			var cos = Math.cos(angle), sin = Math.sin(angle);
-			c.moveTo(cos * 0.1, sin * 0.1);
-			c.lineTo(cos * 0.3, sin * 0.3);
-			c.moveTo(cos * 0.16 - sin * 0.1, sin * 0.16 + cos * 0.1);
-			c.lineTo(cos * 0.16 + sin * 0.1, sin * 0.16 - cos * 0.1);
-			c.moveTo(cos * 0.23 - sin * 0.05, sin * 0.23 + cos * 0.05);
-			c.lineTo(cos * 0.23 + sin * 0.05, sin * 0.23 - cos * 0.05);
-		}
-		c.stroke();
-	};
+	var cc = this.target.color +1
+
+	this.sprite =  new RAPT.SpriteGroup({
+		name:'wallavoider',
+		material:RAPT.MAT_ENEMY,
+		nuv:16,
+		list:['p1'],
+		uvs:[[cc+1,5]]
+	});
+
+	this.sprite.moveto(center);
 }
 
 RAPT.WallAvoider.prototype = new RAPT.RotatingEnemy;
+RAPT.WallAvoider.prototype = Object.create( RAPT.RotatingEnemy.prototype );
 
 RAPT.WallAvoider.prototype.move = function(seconds) {
 	if (this.target.isDead()) {
@@ -62,6 +57,7 @@ RAPT.WallAvoider.prototype.reactToWorld = function(contact) {
 };
 
 RAPT.WallAvoider.prototype.onDeath = function() {
+	this.sprite.remove();
 	RAPT.gameState.incrementStat(RAPT.STAT_ENEMY_DEATHS);
 
 	var position = this.getCenter();
@@ -79,13 +75,7 @@ RAPT.WallAvoider.prototype.getTarget = function() {
 };
 
 RAPT.WallAvoider.prototype.afterTick = function(seconds) {
-	this.bodySprite.offsetBeforeRotation = this.getCenter();
+	this.sprite.moveto(this.getCenter());
 	this.angularVelocity = (this.angularVelocity + RAPT.randInRange(-Math.PI, Math.PI)) * 0.5;
-	this.bodySprite.angle += this.angularVelocity * seconds;
-};
-
-RAPT.WallAvoider.prototype.draw = function(c) {
-	c.fillStyle = (this.target == RAPT.gameState.playerA) ? 'red' : 'blue';
-	c.strokeStyle = 'black';
-	this.bodySprite.draw(c);
+	this.sprite.group.rotation.z += this.angularVelocity * seconds;
 };
