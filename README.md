@@ -1,6 +1,6 @@
 <img src="http://lo-th.github.io/RAPT/textures/rapt.jpg"/> RAPT v0.2
 
-RAPT is a deep diminution of [Robots Are People Too](https://github.com/evanw/rapt)<br>
+RAPT is a optimization of [Robots Are People Too](https://github.com/evanw/rapt)<br>
 in pure javascript no extra libs.
 
 It's converted to webgl 3d with the power of three.js and sea3d.<br>
@@ -15,5 +15,5 @@ _ advanced level editor 'in game'<br>
 _ add more gameplay options: fight with sword, more monster, gamepad...<br>
 _ random level/dungeon creator like Terraria or starbound...<br>
 
-So let's play<br>
+Let's play<br>
 [**START**](http://lo-th.github.io/RAPT/index.html)
