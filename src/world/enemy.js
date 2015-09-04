@@ -67,7 +67,7 @@ RAPT.Enemy.prototype = {
 		RAPT.gameState.collider.onEntityWorld(this, RAPT.gameState.edgeQuad, RAPT.gameState.world);
 		return (RAPT.gameState.edgeQuad.edges[RAPT.EDGE_FLOOR] != null);
 	},
-	draw : function(){ console.log( 'Enemy.draw() unimplemented'); },
+	//draw : function(){ console.log( 'Enemy.draw() unimplemented'); },
 
 	//onDeath : function() {},
 	onRespawn : function() {},
@@ -195,13 +195,13 @@ RAPT.FreefallEnemy.prototype.getShape = function() {
 	return this.hitCircle;
 };
 
-RAPT.FreefallEnemy.prototype.draw = function(c) {
+/*RAPT.FreefallEnemy.prototype.draw = function(c) {
 	var pos = this.hitCircle.center;
 	c.fillStyle = 'black';
 	c.beginPath();
 	c.arc(pos.x, pos.y, this.hitCircle.radius, 0, Math.PI*2, false);
 	c.fill();
-};
+};*/
 
 // This moves the enemy and constrains its position
 RAPT.FreefallEnemy.prototype.move = function(seconds) {

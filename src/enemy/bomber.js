@@ -21,14 +21,14 @@ RAPT.Bomber = function (center, angle) {
 		size : 1,
 		nuv:16,
 		uvs:[[5,0], [6,0]],
-		color:0XFFCC00,
 
-		list:['p1', 'p2'],
-		sizes: [ [0.8,0.8] ]
+		list:['body', 'bombe1'],
+		//sizes: [ [0.8,0.8] ]
 		//pos:[[-0.2,-0.2], [0.2,0.2]]
 	});
 
 	this.sprite.moveto(center);
+	this.startPosY = center.y;
 }
 
 //RAPT.Bomber.prototype = new RAPT.SpawningEnemy;
@@ -62,34 +62,13 @@ RAPT.Bomber.prototype.afterTick = function() {
 	// drawing stuff
 	var pos = this.getCenter();
 	this.sprite.moveto(pos);
+	
+	var sc = 1 * this.getReloadPercentage();
+	this.sprite.sprite[1].scale.set(sc,sc,sc);
 };
 
 RAPT.Bomber.prototype.onDeath = function() {
 	this.sprite.remove();
 	RAPT.Bomb.prototype.onDeath.call(this);
 	RAPT.gameState.incrementStat(RAPT.STAT_ENEMY_DEATHS);
-};
-
-RAPT.Bomber.prototype.draw = function(c) {
-	/*var pos = this.getCenter();
-	c.strokeStyle = 'black';
-	c.beginPath();
-	c.moveTo(pos.x - 0.25, pos.y - 0.2);
-	c.lineTo(pos.x - 0.25, pos.y - 0.1);
-	c.lineTo(pos.x - 0.1, pos.y + 0.05);
-	c.lineTo(pos.x + 0.1, pos.y + 0.05);
-	c.lineTo(pos.x + 0.25, pos.y - 0.1);
-	c.lineTo(pos.x + 0.25, pos.y - 0.2);
-	c.arc(pos.x, pos.y - RAPT.BOMBER_HEIGHT * 0.5, RAPT.BOMB_RADIUS, 0, Math.PI, false);
-	c.lineTo(pos.x - 0.25, pos.y - 0.2);
-	c.moveTo(pos.x - 0.1, pos.y + 0.05);
-	c.lineTo(pos.x - 0.2, pos.y + 0.15);
-	c.moveTo(pos.x + 0.1, pos.y + 0.05);
-	c.lineTo(pos.x + 0.2, pos.y + 0.15);
-	c.stroke();
-
-	c.fillStyle = 'black';
-	c.beginPath();
-	c.arc(pos.x, pos.y - RAPT.BOMBER_HEIGHT * 0.5, RAPT.BOMB_RADIUS * this.getReloadPercentage(), 0, 2*Math.PI, false);
-	c.fill();*/
 };

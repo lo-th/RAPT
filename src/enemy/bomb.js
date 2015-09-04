@@ -3,14 +3,27 @@ RAPT.BOMB_RADIUS = 0.15;
 RAPT.Bomb = function (center, velocity) {
 	RAPT.FreefallEnemy.call(this, RAPT.ENEMY_BOMB, center, RAPT.BOMB_RADIUS, 0);
 	this.velocity = velocity;
+
+	this.sprite =  new RAPT.SpriteGroup({
+		name:'bombe',
+		material:RAPT.MAT_ENEMY,
+		size : 1,
+		nuv:16,
+		uvs:[[6,0]],
+		list:['bombe']
+	});
+	this.sprite.moveto(center);
 }
 
-//RAPT.Bomb.prototype = new RAPT.FreefallEnemy;
 RAPT.Bomb.prototype = Object.create( RAPT.FreefallEnemy.prototype );
-//RAPT.Bomb.prototype.constructor = RAPT.Bomb;
+
+RAPT.Bomb.prototype.afterTick = function(seconds) {
+	this.sprite.moveto(this.hitCircle.center);
+};
 
 // bomb particle effects
 RAPT.Bomb.prototype.onDeath = function() {
+	this.sprite.remove();
 	var position = this.getShape().getCenter();
 
 	// fire
