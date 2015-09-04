@@ -212,15 +212,6 @@ RAPT.GameState.prototype = {
 			if (this.enemies[i].isDead()) this.enemies.splice(i, 1);
 		}
 
-		/*for (var i = 0; i < this.enemies.length; ++i) {
-			this.enemies[i].tick(seconds);
-		}
-		for (var i = 0; i < this.enemies.length; ++i) {
-			if (this.enemies[i].isDead()) {
-				this.enemies.splice(i, 1);
-			}
-		}*/
-
 		this.spawnPointParticleTimer -= seconds;
 		if(this.spawnPointParticleTimer <= 0) {
 			var position = this.world.spawnPoint.sub(new RAPT.Vector(0, 0.25));
@@ -228,33 +219,7 @@ RAPT.GameState.prototype = {
 			this.spawnPointParticleTimer += RAPT.SPAWN_POINT_PARTICLE_FREQ;
 		}
 	},
-	/*drawSpawnPoint : function (c, point) {
-		c.strokeStyle = c.fillStyle = 'rgba(255, 255, 255, 0.1)';
-		c.beginPath();
-		c.arc(point.x, point.y, 1, 0, 2 * Math.PI, false);
-		c.stroke();
-		c.fill();
 
-		var gradient = c.createLinearGradient(0, point.y - 0.4, 0, point.y + 0.6);
-		gradient.addColorStop(0, 'rgba(255, 255, 255, 0.75)');
-		gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
-		c.fillStyle = gradient;
-		c.beginPath();
-		c.lineTo(point.x - 0.35, point.y + 0.6);
-		c.lineTo(point.x - 0.1, point.y - 0.4);
-		c.lineTo(point.x + 0.1, point.y - 0.4);
-		c.lineTo(point.x + 0.35, point.y + 0.6);
-		c.fill();
-
-		c.fillStyle = 'black';
-		c.beginPath();
-		c.moveTo(point.x - 0.1, point.y - 0.45);
-		c.lineTo(point.x - 0.1, point.y - 0.4);
-		c.lineTo(point.x + 0.1, point.y - 0.4);
-		c.lineTo(point.x + 0.1, point.y - 0.45);
-		c.arc(point.x, point.y - 0.45, 0.2, 0, Math.PI, true);
-		c.fill();
-	},*/
 	addSpawnPoint:function(center){
 		this.startPoint =  new RAPT.SpriteGroup({
 			name:'start',
@@ -284,66 +249,14 @@ RAPT.GameState.prototype = {
 		});
 		end.moveto(center);
 	},
-	/*drawGoal : function (c, point, time) {
-		var percent = time - Math.floor(time);
-		percent = 1 - percent;
-		percent = (percent - Math.pow(percent, 6)) * 1.72;
-		percent = 1 - percent;
-
-		c.fillStyle = 'black';
-		for (var i = 0; i < 4; ++i) {
-			var angle = i * (2 * Math.PI / 4);
-			var s = Math.sin(angle);
-			var csn = Math.cos(angle);
-			var radius = 0.45 - percent * 0.25;
-			var size = 0.15;
-			c.beginPath();
-			c.moveTo(point.x + csn * radius - s * size, point.y + s * radius + csn * size);
-			c.lineTo(point.x + csn * radius + s * size, point.y + s * radius - csn * size);
-			c.lineTo(point.x + csn * (radius - size), point.y + s * (radius - size));
-			c.fill();
-		}
-	},*/
-	draw : function(c, xmin, ymin, xmax, ymax) {
-		// no enemy or particle is larger than two cells wide
-		RAPT.drawMinX = xmin - 2;
-		RAPT.drawMinY = ymin - 2;
-		RAPT.drawMaxX = xmax + 2;
-		RAPT.drawMaxY = ymax + 2;
-		
-		// spawn point and goal
-		var spawnPoint = this.world.spawnPoint.add(this.spawnPointOffset);
-		var goal = this.world.goal;
-		if (spawnPoint.x >= RAPT.drawMinX && spawnPoint.y >= RAPT.drawMinY && spawnPoint.x <= RAPT.drawMaxX && spawnPoint.y <= RAPT.drawMaxY) {
-			this.drawSpawnPoint(c, spawnPoint);
-		}
-		if (goal.x >= RAPT.drawMinX && goal.y >= RAPT.drawMinY && goal.x <= RAPT.drawMaxX && goal.y <= RAPT.drawMaxY) {
-			this.drawGoal(c, goal, this.timeSinceStart);
-		}
-		
-		// players
-		
-		//this.playerA.draw(c);
-		//this.playerB.draw(c);
-		
-		// enemies
-		var i = this.enemies.length;
-		while(i--){
-		//for (var i = 0; i < this.enemies.length; ++i) {
-			var enemy = this.enemies[i];
-			var center = enemy.getCenter();
-			if (center.x >= RAPT.drawMinX && center.y >= RAPT.drawMinY && center.x <= RAPT.drawMaxX && center.y <= RAPT.drawMaxY) {
-				enemy.draw(c);
-			}
-		}
-    },
-
     getInfo : function(){
     	var info = {}
     	info[0] = this.playerA.getInfo();
 		info[1] = this.playerB.getInfo();
 		return info;
     },
+
+
     //---------------------------------------- LOADER
 
     loadLevelFromJSON : function(json) {
@@ -402,24 +315,15 @@ RAPT.GameState.prototype = {
 		for (var i = 0; i < json['entities'].length; ++i) {
 			var e = json['entities'][i];
 			switch (e['class']) {
-			case 'cog':
-				this.enemies.push(new RAPT.GoldenCog(this.jsonToVec(e['pos'])));
-				break;
-			case 'wall':
-				RAPT.gameState.addDoor(this.jsonToVec(e['end']), this.jsonToVec(e['start']), e['oneway'] ? RAPT.ONE_WAY : RAPT.TWO_WAY, e['color'], e['open']);
-
-				break;
-			case 'button':
-				var button = new RAPT.Doorbell(this.jsonToVec(e['pos']), e['type'], true);
-				button.doors = e['walls'];
-				this.enemies.push(button);
-				break;
-			case 'sign':
-				this.enemies.push(new RAPT.HelpSign(this.jsonToVec(e['pos']), e['text']));
-				break;
-			case 'enemy':
-				this.enemies.push(this.jsonToEnemy(e));
-				break;
+				case 'cog': this.enemies.push(new RAPT.GoldenCog(this.jsonToVec(e['pos']))); break;
+				case 'wall': RAPT.gameState.addDoor(this.jsonToVec(e['end']), this.jsonToVec(e['start']), e['oneway'] ? RAPT.ONE_WAY : RAPT.TWO_WAY, e['color'], e['open']); break;
+				case 'button':
+					var button = new RAPT.Doorbell(this.jsonToVec(e['pos']), e['type'], true);
+					button.doors = e['walls'];
+					this.enemies.push(button);
+					break;
+				case 'sign': this.enemies.push(new RAPT.HelpSign(this.jsonToVec(e['pos']), e['text'])); break;
+				case 'enemy': this.enemies.push(this.jsonToEnemy(e)); break;
 			}
 		}
 	},
@@ -432,40 +336,23 @@ RAPT.GameState.prototype = {
 	jsonToEnemy : function (json) {
 		var pos = this.jsonToVec(json['pos']);
 		switch (json['type']) {
-			case 'bomber':
-				return new RAPT.Bomber(pos, json['angle']);
-			case 'bouncy rocket launcher':
-				return new RAPT.BouncyRocketLauncher(pos, this.jsonToTarget(json));
-			case 'corrosion cloud':
-				return new RAPT.CorrosionCloud(pos, this.jsonToTarget(json));
-			case 'doom magnet':
-				return new RAPT.DoomMagnet(pos);
-			case 'grenadier':
-				return new RAPT.Grenadier(pos, this.jsonToTarget(json));
-			case 'jet stream':
-				return new RAPT.JetStream(pos, json['angle']);
-			case 'headache':
-				return new RAPT.Headache(pos, this.jsonToTarget(json));
-			case 'hunter':
-				return new RAPT.Hunter(pos);
-			case 'multi gun':
-				return new RAPT.MultiGun(pos);
-			case 'popper':
-				return new RAPT.Popper(pos);
-			case 'rocket spider':
-				return new RAPT.RocketSpider(pos, json['angle']);
-			case 'shock hawk':
-				return new RAPT.ShockHawk(pos, this.jsonToTarget(json));
-			case 'spike ball':
-				return new RAPT.SpikeBall(pos);
-			case 'stalacbat':
-				return new RAPT.Stalacbat(pos, this.jsonToTarget(json));
-			case 'wall avoider':
-				return new RAPT.WallAvoider(pos, this.jsonToTarget(json));
-			case 'wall crawler':
-				return new RAPT.WallCrawler(pos, json['angle']);
-			case 'wheeligator':
-				return new RAPT.Wheeligator(pos, json['angle']);
+			case 'bomber': return new RAPT.Bomber(pos, json['angle']);
+			case 'bouncy rocket launcher': return new RAPT.BouncyRocketLauncher(pos, this.jsonToTarget(json));
+			case 'corrosion cloud': return new RAPT.CorrosionCloud(pos, this.jsonToTarget(json));
+			case 'doom magnet': return new RAPT.DoomMagnet(pos);
+			case 'grenadier': return new RAPT.Grenadier(pos, this.jsonToTarget(json));
+			case 'jet stream': return new RAPT.JetStream(pos, json['angle']);
+			case 'headache': return new RAPT.Headache(pos, this.jsonToTarget(json));
+			case 'hunter': return new RAPT.Hunter(pos);
+			case 'multi gun': return new RAPT.MultiGun(pos);
+			case 'popper': return new RAPT.Popper(pos);
+			case 'rocket spider': return new RAPT.RocketSpider(pos, json['angle']);
+			case 'shock hawk': return new RAPT.ShockHawk(pos, this.jsonToTarget(json));
+			case 'spike ball': return new RAPT.SpikeBall(pos);
+			case 'stalacbat': return new RAPT.Stalacbat(pos, this.jsonToTarget(json));
+			case 'wall avoider': return new RAPT.WallAvoider(pos, this.jsonToTarget(json));
+			case 'wall crawler': return new RAPT.WallCrawler(pos, json['angle']);
+			case 'wheeligator': return new RAPT.Wheeligator(pos, json['angle']);
 			default:
 				console.log('Invalid enemy type in level');
 				return new RAPT.SpikeBall(pos);

@@ -4,11 +4,7 @@ RAPT.SHAPE_CIRCLE = 0;
 RAPT.SHAPE_AABB = 1;
 RAPT.SHAPE_POLYGON = 2;
 
-RAPT.useBackgroundCache = true;
-
 RAPT.gameScale = 60;
-
-RAPT.RGB = 1/255;
 
 // text constants
 var GAME_WIN_TEXT = "You won!  Hit SPACE to play the next level or ESC for the level selection menu.";
@@ -41,7 +37,6 @@ RAPT.Game = function() {
 	RAPT.gameState = new RAPT.GameState();
 }
 
-//Game.prototype = Object.create( Screen.prototype );
 RAPT.Game.prototype = {
 	constructor: RAPT.Game,
 	resize : function(w, h) {
@@ -94,72 +89,9 @@ RAPT.Game.prototype = {
 			}
 		}
 	},
-	/*render : function(c, center, width, height, backgroundCache) {
-		var halfWidth = width * 0.5;
-		var halfHeight = height * 0.5;
-		var xmin = center.x - halfWidth;
-		var ymin = center.y - halfHeight;
-		var xmax = center.x + halfWidth;
-		var ymax = center.y + halfHeight;
-		c.save();
-		c.translate(-center.x, -center.y);
-
-		RAPT.drawMinX = xmin - 2;
-		RAPT.drawMinY = ymin - 2;
-		RAPT.drawMaxX = xmax + 2;
-		RAPT.drawMaxY = ymax + 2;
-		
-		// draw the background, backgroundCache is an optional argument
-		if (backgroundCache) {
-			backgroundCache.draw(c, xmin, ymin, xmax, ymax);
-		} else {
-			RAPT.gameState.world.draw(c, xmin, ymin, xmax, ymax);
-		}
-
-
-		
-		//RAPT.gameState.draw(c, xmin, ymin, xmax, ymax);
-		RAPT.Particle.draw(c);
-		c.restore();
-	},*/
 	message : function(s){
 		RAPT.MESSAGE.innerHTML = s;
 	},
-	/*drawTextBox : function(c, textArray, xCenter, yCenter, textSize) {
-		var numLines = textArray.length;
-		if (numLines < 1) return;
-
-		// Calculate the height of all lines and the widest line's width
-		c.font = textSize + 'px Arial, sans-serif';
-		var lineHeight = textSize + 2;
-		var textHeight = lineHeight * numLines;
-		var textWidth = -1;
-		for (var i = 0; i < numLines; ++i) {
-			var currWidth = c.measureText(textArray[i]).width;
-			if (textWidth < currWidth) {
-				textWidth = currWidth;
-			}
-		}
-
-		// Draw the box
-		c.fillStyle = '#BFBFBF';
-		c.strokeStyle = '#7F7F7F';
-		c.lineWidth = 1;
-		var xLeft = xCenter - textWidth / 2 - TEXT_BOX_X_MARGIN;
-		var yBottom = yCenter - textHeight / 2 - TEXT_BOX_Y_MARGIN;
-		c.fillRect(xLeft, yBottom, textWidth + TEXT_BOX_X_MARGIN * 2, textHeight + TEXT_BOX_Y_MARGIN * 2);
-		c.strokeRect(xLeft, yBottom, textWidth + TEXT_BOX_X_MARGIN * 2, textHeight + TEXT_BOX_Y_MARGIN * 2);
-
-		// Draw the text
-		c.fillStyle = 'black';
-		c.textAlign = 'center';
-		// yCurr starts at the top, so subtract half of height of box
-		var yCurr = yCenter + 4 - (numLines - 1) * lineHeight / 2;
-		for (var i = 0; i < numLines; ++i) {
-			c.fillText(textArray[i], xCenter, yCurr);
-			yCurr += lineHeight;
-		}
-	},*/
 
 	draw3d : function(){
 		var mid = this.width2*0.25;
@@ -230,43 +162,6 @@ RAPT.Game.prototype = {
 
 	},
 
-	draw : function(c) {
-		//return;
-		/*if (!RAPT.useBackgroundCache) {
-			// clear the background
-			c.fillStyle = '#BFBFBF';
-			c.fillRect(0, 0, this.width, this.height);
-		}
-		
-		// draw the game
-		c.save();
-		c.translate(this.width * 0.5, this.height * 0.5);
-		c.scale(RAPT.gameScale, -RAPT.gameScale);
-		c.lineWidth = 1 / RAPT.gameScale;
-		this.camera.draw(c, this);
-		c.restore();
-
-		if (RAPT.gameState.gameStatus === RAPT.GAME_WON) {
-			// draw winning text
-			c.save();
-			var gameWinText = (this.lastLevel ? "Congratulations, you beat the last level in this set!	Press SPACE or ESC to return to the level selection menu." : GAME_WIN_TEXT);
-			var cogsCollectedText = "Cogs Collected: " + RAPT.gameState.stats[RAPT.STAT_COGS_COLLECTED] + "/" + RAPT.gameState.stats[RAPT.STAT_NUM_COGS];
-			this.drawTextBox(c, [gameWinText, "", cogsCollectedText], this.width / 2, this.height / 2, 14);
-			c.restore();
-		} else if (RAPT.gameState.gameStatus === RAPT.GAME_LOST) {
-			// draw losing text
-			c.save();
-			this.drawTextBox(c, [GAME_LOSS_TEXT], this.width / 2, this.height / 2, 14);
-			c.restore();
-		}
-
-		// draw the fps counter
-		c.font = '10px Arial, sans-serif';
-		c.fillStyle = 'black';
-		var text = this.fps.toFixed(0) + ' FPS';
-		c.fillText(text, this.width - 5 - c.measureText(text).width, this.height - 5);
-		*/
-	},
 	keyDown : function(e) {
 		var keyCode = e.which;
 		var action = RAPT.Keys.fromKeyCode(keyCode);

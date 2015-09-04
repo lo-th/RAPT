@@ -232,10 +232,10 @@ RAPT.World3D.prototype = {
                         if(type<4){
                             rmatrix.makeRotationZ(0);
                             switch(type){
-                                case 1:rmatrix.makeRotationZ(-RAPT.PI90); break
-                                case 0:rmatrix.makeRotationZ(RAPT.PI90); break
-                                case 3:rmatrix.makeRotationZ(RAPT.PI);  break
-                                case 2:rmatrix.makeRotationZ(0); break
+                                case 1:rmatrix.makeRotationZ(-RAPT.PI90); break;
+                                case 0:rmatrix.makeRotationZ(RAPT.PI90); break;
+                                case 3:rmatrix.makeRotationZ(RAPT.PI);  break;
+                                case 2:rmatrix.makeRotationZ(0); break;
                             }
 
                             matrix.multiply(rmatrix);
@@ -243,10 +243,10 @@ RAPT.World3D.prototype = {
 
                         } else{
                             switch(type){
-                                case 7:rmatrix.makeRotationZ(RAPT.PI90); break
-                                case 5:rmatrix.makeRotationZ(-RAPT.PI90); break
-                                case 6:rmatrix.makeRotationZ(RAPT.PI); break
-                                case 4:rmatrix.makeRotationZ(0); break
+                                case 7:rmatrix.makeRotationZ(RAPT.PI90); break;
+                                case 5:rmatrix.makeRotationZ(-RAPT.PI90); break;
+                                case 6:rmatrix.makeRotationZ(RAPT.PI); break;
+                                case 4:rmatrix.makeRotationZ(0); break;
                             }
                             matrix.multiply(rmatrix);
                             tmpGeometry.merge(RAPT.GEO.dfloor, matrix);

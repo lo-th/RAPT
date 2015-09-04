@@ -49,98 +49,8 @@ RAPT.clamberingKeyframes = [
 	new RAPT.Keyframe(0, -0.2).add(30, -30, 160, -180, -30, 40, 20, -10, 20, 20)
 ];
 
-// enum PlayerSpriteIndex
-/*RAPT.PLAYER_HEAD = 0;
-RAPT.PLAYER_TORSO = 1;
-RAPT.PLAYER_LEFT_UPPER_LEG = 2;
-RAPT.PLAYER_LEFT_LOWER_LEG = 3;
-RAPT.PLAYER_LEFT_UPPER_ARM = 4;
-RAPT.PLAYER_LEFT_LOWER_ARM = 5;
-RAPT.PLAYER_RIGHT_UPPER_LEG = 6;
-RAPT.PLAYER_RIGHT_LOWER_LEG = 7;
-RAPT.PLAYER_RIGHT_UPPER_ARM = 8;
-RAPT.PLAYER_RIGHT_LOWER_ARM = 9;
-RAPT.PLAYER_NUM_SPRITES = 10;*/
-
-/*RAPT.drawPlayerQuad = function (c, x1, x2, y1, y2){
-	x1 /= 50;
-	x2 /= 50;
-	y1 /= 50;
-	y2 /= 50;
-	c.beginPath();
-	c.moveTo(x1, y1);
-	c.lineTo(x2, y2);
-	c.lineTo(-x2, y2);
-	c.lineTo(-x1, y1);
-	c.closePath();
-	c.fill();
-	c.stroke();
-}
-
-RAPT.drawPlayerHead = function (c, x1, x2, y1, y2, y3){
-	RAPT.drawPlayerQuad(c, x1, x2, y1, y2);
-	y2 /= 50;
-	y3 /= 50;
-	c.beginPath();
-	c.moveTo(0, y2);
-	c.lineTo(0, y3 - 0.02);
-	c.arc(0, y3, 0.02, -Math.PI / 2, Math.PI * 3 / 2, false);
-	c.stroke();
-}*/
-
-/*RAPT.createPlayerSprites = function () {
-	var sprites = [];
-
-	for(var i = 0; i < RAPT.PLAYER_NUM_SPRITES; i++) {
-		//sprites.push(new RAPT.Sprite());
-		sprites.push(new RAPT.Sprite('player'));
-	}
-
-	sprites[RAPT.PLAYER_HEAD].drawGeometry = function(c) { RAPT.drawPlayerQuad(c, 2.5, 2.5, 1, 10, 18); };
-	sprites[RAPT.PLAYER_TORSO].drawGeometry = function(c) { RAPT.drawPlayerQuad(c, 1.5, 1.5, 0, 15); };
-	sprites[RAPT.PLAYER_LEFT_UPPER_LEG].drawGeometry = sprites[RAPT.PLAYER_RIGHT_UPPER_LEG].drawGeometry = function(c) { RAPT.drawPlayerQuad(c, 1.5, 1, 0, -10); };
-	sprites[RAPT.PLAYER_LEFT_LOWER_LEG].drawGeometry = sprites[RAPT.PLAYER_RIGHT_LOWER_LEG].drawGeometry = function(c) { RAPT.drawPlayerQuad(c, 1, 1.5, 0, -10); };
-	sprites[RAPT.PLAYER_LEFT_UPPER_ARM].drawGeometry = sprites[RAPT.PLAYER_RIGHT_UPPER_ARM].drawGeometry = function(c) { RAPT.drawPlayerQuad(c, 1.5, 0.5, 0, -9); };
-	sprites[RAPT.PLAYER_LEFT_LOWER_ARM].drawGeometry = sprites[RAPT.PLAYER_RIGHT_LOWER_ARM].drawGeometry = function(c) { RAPT.drawPlayerQuad(c, 0.5, 1.5, 0, -10); };
-
-	sprites[RAPT.PLAYER_HEAD].setParent(sprites[RAPT.PLAYER_TORSO]);
-	sprites[RAPT.PLAYER_LEFT_UPPER_ARM].setParent(sprites[RAPT.PLAYER_TORSO]);
-	sprites[RAPT.PLAYER_RIGHT_UPPER_ARM].setParent(sprites[RAPT.PLAYER_TORSO]);
-	sprites[RAPT.PLAYER_LEFT_LOWER_ARM].setParent(sprites[RAPT.PLAYER_LEFT_UPPER_ARM]);
-	sprites[RAPT.PLAYER_RIGHT_LOWER_ARM].setParent(sprites[RAPT.PLAYER_RIGHT_UPPER_ARM]);
-	sprites[RAPT.PLAYER_LEFT_UPPER_LEG].setParent(sprites[RAPT.PLAYER_TORSO]);
-	sprites[RAPT.PLAYER_RIGHT_UPPER_LEG].setParent(sprites[RAPT.PLAYER_TORSO]);
-	sprites[RAPT.PLAYER_LEFT_LOWER_LEG].setParent(sprites[RAPT.PLAYER_LEFT_UPPER_LEG]);
-	sprites[RAPT.PLAYER_RIGHT_LOWER_LEG].setParent(sprites[RAPT.PLAYER_RIGHT_UPPER_LEG]);
-
-	sprites[RAPT.PLAYER_HEAD].offsetBeforeRotation = new RAPT.Vector(0, 17 / 50);
-	sprites[RAPT.PLAYER_LEFT_LOWER_LEG].offsetBeforeRotation = new RAPT.Vector(0, -10 / 50);
-	sprites[RAPT.PLAYER_RIGHT_LOWER_LEG].offsetBeforeRotation = new RAPT.Vector(0, -10 / 50);
-	sprites[RAPT.PLAYER_LEFT_UPPER_ARM].offsetBeforeRotation = new RAPT.Vector(0, 15 / 50);
-	sprites[RAPT.PLAYER_RIGHT_UPPER_ARM].offsetBeforeRotation = new RAPT.Vector(0, 15 / 50);
-	sprites[RAPT.PLAYER_LEFT_LOWER_ARM].offsetBeforeRotation = new RAPT.Vector(0, -9 / 50);
-	sprites[RAPT.PLAYER_RIGHT_LOWER_ARM].offsetBeforeRotation = new RAPT.Vector(0, -9 / 50);
-
-	return sprites;
-}*/
 
 RAPT.Player = function (center, color) {
-
-	/*this.group = new RAPT.SpriteGroup({
-
-		name:'player'+ color,
-		list:  ['torso', 'head' , 'uplegl', 'uplegr', 'lowlegl', 'lowlegr', 'uparml', 'uparmr', 'lowarml', 'lowarmr'],
-		parent:['null' , 'torso', 'torso' , 'torso' , 'uplegl' , 'uplegr' , 'torso' , 'torso' , 'uparml' , 'uparmr' ],
-		range: ['head', 'torso', 'uplegl', 'lowlegl', 'uparml' , 'lowarml', 'uplegr', 'lowlegr', 'uparmr', 'lowarmr' ],
-		
-		size:  [ [4,16], [5,8]  , [3,10] , [3,10], [2.5, 9]   , [2.5,9]    , [2, 9]  , [2, 9]  , [2,10]    , [2,10]   ],
-		pos:   [ [0,0] , [0,9]  , [0,-7.5] , [0,-7.5], [0,-10]  , [0,-10]  , [0, 5]  , [0, 5]  , [0,-8.5]    , [0,-8.5]    ],
-		center:[ [0,0] , [0,4]  , [0,-5]   , [0,-5]  , [0,-4.5] , [0,-4.5] , [0,-4.5] , [0,-4.5] , [0,-5]  , [0,-5]    ],
-	});*/
-
-    
-
-	
 
     //RAPT.Entity.call(this);
 	this.velocity = new RAPT.Vector(0, 0);
@@ -634,19 +544,5 @@ RAPT.Player.prototype = {
 		this.info[1] = pos.y || 0;
 		this.info[2] = this.state;
 		return this.info;
-	},
-	/*draw : function(c) {
-		if(!this.isDead()) {
-			if(this.isSuperJumping) {
-				var alpha = Math.max(0, this.velocity.y / RAPT.PLAYER_SUPER_JUMP_SPEED);
-				c.strokeStyle = 'rgba(255, 255, 0, ' + alpha.toFixed(3) + ')';
-				c.lineWidth *= 3;
-				this.sprites[RAPT.PLAYER_TORSO].draw(c);
-				c.lineWidth /= 3;
-			}
-			c.fillStyle = (this.getPlayerIndex() == 0) ? 'red' : 'blue';
-			c.strokeStyle = 'black';
-			this.sprites[RAPT.PLAYER_TORSO].draw(c);
-		}
-	}*/
+	}
 }
