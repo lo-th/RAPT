@@ -10,76 +10,21 @@ RAPT.BouncyRocketLauncher = function (center, target) {
 	this.canFire = true;
 	this.angle = 0;
 
-	this.bodySprite = new RAPT.Sprite();
-	if (this.target === RAPT.gameState.playerA) {
-		this.bodySprite.drawGeometry = function(c) {
-			// End of gun
-			c.strokeStyle = 'black';
-			c.beginPath();
-			c.moveTo(0, -0.1);
-			c.lineTo(-0.3, -0.1);
-			c.lineTo(-0.3, 0.1);
-			c.lineTo(0, 0 + 0.1);
-			c.stroke();
+	var cc = this.target.color;
+	this.sprite =  new RAPT.SpriteGroup({
+		name:'bouncyrocketlaunch',
+		material:RAPT.MAT_ENEMY,
+		size:1,
+		nuv:16,
+		uvs:[[cc+7,1]],
+		list:['p1']
+	});
 
-			// Main body
-			c.fillStyle = 'red';
-			c.beginPath();
-			c.arc(0, 0, 0.2, 0, 2 * Math.PI, false);
-			c.fill();
-			c.fillStyle = 'blue';
-			c.beginPath();
-			c.arc(0, 0, 0.2, 1.65 * Math.PI, 2.35 * Math.PI, false);
-			c.fill();
-
-			c.strokeStyle = 'black';
-			c.beginPath();
-			c.arc(0, 0, 0.2, 0, 2 * Math.PI, false);
-			c.stroke();
-			
-			c.beginPath();
-			c.moveTo(0.1, -0.18);
-			c.lineTo(0.1, 0.18);
-			c.stroke();
-		}
-	} else {
-		this.bodySprite.drawGeometry = function(c) {
-			// End of gun
-			c.strokeStyle = 'black';
-			c.beginPath();
-			c.moveTo(0, -0.1);
-			c.lineTo(-0.3, -0.1);
-			c.lineTo(-0.3, 0.1);
-			c.lineTo(0, 0 + 0.1);
-			c.stroke();
-
-			// Main body
-			c.fillStyle = 'blue';
-			c.beginPath();
-			c.arc(0, 0, 0.2, 0, 2 * Math.PI, false);
-			c.fill();
-			c.fillStyle = 'red';
-			c.beginPath();
-			c.arc(0, 0, 0.2, 1.65 * Math.PI, 2.35 * Math.PI, false);
-			c.fill();
-
-			c.strokeStyle = 'black';
-			c.beginPath();
-			c.arc(0, 0, 0.2, 0, 2 * Math.PI, false);
-			c.stroke();
-
-			c.fillStyle = 'black';
-			c.beginPath();
-			c.moveTo(0.1, -0.18);
-			c.lineTo(0.1, 0.18);
-			c.stroke();
-		}
-	}
+	this.sprite.moveto(center);
 }
 
 //RAPT.BouncyRocketLauncher.prototype = new RAPT.SpawningEnemy;
 RAPT.BouncyRocketLauncher.prototype = Object.create( RAPT.SpawningEnemy.prototype );
-//RAPT.BouncyRocketLauncher.prototype.constructor = RAPT.BouncyRocketLauncher;
 
 RAPT.BouncyRocketLauncher.prototype.setTarget = function(player) { this.target = player; }
 
@@ -94,8 +39,7 @@ RAPT.BouncyRocketLauncher.prototype.spawn = function() {
 		var targetDelta = this.target.getCenter().sub(this.getCenter());
 		// If Player is out of range or out of line of sight, don't launch anything
 		if (targetDelta.length() < RAPT.BOUNCY_LAUNCHER_RANGE) {
-			if (!RAPT.gameState.collider.lineOfSightWorld(this.getCenter(), this.target.getCenter(), RAPT.gameState.world))
-			{
+			if (!RAPT.gameState.collider.lineOfSightWorld(this.getCenter(), this.target.getCenter(), RAPT.gameState.world)) {
 				RAPT.gameState.addEnemy(new RAPT.BouncyRocket(this.getCenter(), this.target, targetDelta.atan2(), this), this.getCenter());
 				this.canFire = false;
 				return true;
@@ -108,11 +52,10 @@ RAPT.BouncyRocketLauncher.prototype.spawn = function() {
 RAPT.BouncyRocketLauncher.prototype.afterTick = function(seconds) {
 	var position = this.getCenter();
 	if (!this.target.isDead()) {
-		this.bodySprite.angle = (position.sub(this.target.getCenter())).atan2();
+		this.sprite.group.rotation.z = (position.sub(this.target.getCenter())).atan2();
+		//this.bodySprite.angle = (position.sub(this.target.getCenter())).atan2();
 	}
-	this.bodySprite.offsetBeforeRotation = position;
-}
+	//this.bodySprite.offsetBeforeRotation = position;
 
-RAPT.BouncyRocketLauncher.prototype.draw = function(c) {
-	this.bodySprite.draw(c);
+	this.sprite.moveto(position);
 }

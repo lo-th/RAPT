@@ -40,7 +40,6 @@ RAPT.Rocket = function (center, target, heading, maxRotation, type) {
 		size : 1,
 		nuv:16,
 		uvs:[[cc,0]],
-		color:0X44CC66,
 		list:['p1'],
 		sizes: [ [0.7,0.7] ]
 	});

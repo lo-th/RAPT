@@ -16,39 +16,11 @@ RAPT.ShockHawk = function (center, target) {
 		size : 1,
 		nuv:16,
 		uvs:[[cc,0]],
-		color:0X44CC66,
 		list:['p1'],
-		//sizes: [ [0.7,0.7] ]
 	});
 
 	this.sprite.moveto(center);
 
-	/*this.bodySprite = new RAPT.Sprite();
-	this.bodySprite.drawGeometry = function(c) {
-		// draw solid center
-		c.beginPath();
-		c.moveTo(0, -0.15);
-		c.lineTo(0.05, -0.1);
-		c.lineTo(0, 0.1);
-		c.lineTo(-0.05, -0.1);
-		c.fill();
-
-		// draw outlines
-		c.beginPath();
-		for(var scale = -1; scale <= 1; scale += 2) {
-			c.moveTo(0, -0.3);
-			c.lineTo(scale * 0.05, -0.2);
-			c.lineTo(scale * 0.1, -0.225);
-			c.lineTo(scale * 0.1, -0.275);
-			c.lineTo(scale * 0.15, -0.175);
-			c.lineTo(0, 0.3);
-
-			c.moveTo(0, -0.15);
-			c.lineTo(scale * 0.05, -0.1);
-			c.lineTo(0, 0.1);
-		}
-		c.stroke();
-	};*/
 }
 //RAPT.ShockHawk.prototype = new RAPT.HoveringEnemy;
 RAPT.ShockHawk.prototype = Object.create( RAPT.HoveringEnemy.prototype );

@@ -5,17 +5,17 @@ RAPT.WallAvoider = function (center, target) {
 	RAPT.RotatingEnemy.call(this, RAPT.ENEMY_WALL_AVOIDER, center, RAPT.WALL_AVOIDER_RADIUS, 0, 0);
 
 	this.target = target;
-	this.acceleration = new RAPT.Vector(0, 0);
+	this.acceleration = new RAPT.Vector(0,0);
 	this.angularVelocity = 0;
 
-	var cc = this.target.color +1
+	var cc = this.target.color;
 
 	this.sprite =  new RAPT.SpriteGroup({
 		name:'wallavoider',
 		material:RAPT.MAT_ENEMY,
 		nuv:16,
 		list:['p1'],
-		uvs:[[cc+1,5]]
+		uvs:[[cc+2,5]]
 	});
 
 	this.sprite.moveto(center);

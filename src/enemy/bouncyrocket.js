@@ -2,7 +2,7 @@ RAPT.BOUNCY_ROCKET_SPEED = 4;
 RAPT.BOUNCY_ROCKET_MAX_ROTATION = 3;
 RAPT.BOUNCY_ROCKET_HEALTH = 2;
 
-RAPT.drawBouncyRocket = function (c, isBlue) {
+/*RAPT.drawBouncyRocket = function (c, isBlue) {
 	var size = 0.1;
 	c.strokeStyle = 'black';
 
@@ -20,7 +20,7 @@ RAPT.drawBouncyRocket = function (c, isBlue) {
 	c.closePath();
 	c.fill();
 	c.stroke();
-}
+}*/
 
 //BouncyRocket.subclasses(Rocket);
 
@@ -32,12 +32,28 @@ RAPT.BouncyRocket = function (center, target, heading, launcher) {
 	this.launcher = launcher;
 	this.hitsUntilExplodes = RAPT.BOUNCY_ROCKET_HEALTH;
 
-	this.sprites[RAPT.ROCKET_SPRITE_RED].drawGeometry = function(c) {
+	
+
+	if(this.sprite)this.sprite.remove();
+
+	var cc = this.target.color;
+	this.sprite = new RAPT.SpriteGroup({
+		name:'bouncyrocket',
+		material:RAPT.MAT_ENEMY,
+		size : 1,
+		nuv:16,
+		uvs:[[cc+5,1]],
+		list:['p1'],
+	});
+
+	this.sprite.moveto(center);
+
+	/*this.sprites[RAPT.ROCKET_SPRITE_RED].drawGeometry = function(c) {
 		RAPT.drawBouncyRocket(c, false);
 	};
 	this.sprites[RAPT.ROCKET_SPRITE_BLUE].drawGeometry = function(c) {
 		RAPT.drawBouncyRocket(c, true);
-	};
+	};*/
 }
 
 RAPT.BouncyRocket.prototype = Object.create( RAPT.Rocket.prototype );
@@ -61,6 +77,7 @@ RAPT.BouncyRocket.prototype.reactToWorld = function(contact) {
 }
 
 RAPT.BouncyRocket.prototype.setDead = function(isDead) {
+	this.sprite.remove();
 	RAPT.Enemy.prototype.setDead.call(this, isDead);
 	if (isDead && this.launcher !== null) {
 		this.launcher.rocketDestroyed();
