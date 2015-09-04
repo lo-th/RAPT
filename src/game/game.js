@@ -27,7 +27,7 @@ RAPT.game = null;
 //_____________________________GAME
 
 RAPT.Game = function() {
-	this.camera = new RAPT.Camera();
+	//this.camera = new RAPT.Camera();
 	this.fps = 0;
 	this.fixedPhysicsTick = 0;
 
@@ -52,7 +52,7 @@ RAPT.Game.prototype = {
 		this.height2 = h / RAPT.gameScale;
 		this.playerA = RAPT.gameState.playerA;
 		this.playerB = RAPT.gameState.playerB;
-		this.camera = new RAPT.Camera(RAPT.gameState.playerA, RAPT.gameState.playerB, w / RAPT.gameScale, h / RAPT.gameScale);
+		//his.camera = new RAPT.Camera(RAPT.gameState.playerA, RAPT.gameState.playerB, w / RAPT.gameScale, h / RAPT.gameScale);
 	},
 	tick : function(seconds) {
 		// when the screen isn't split, standing at the original spawn point:
@@ -94,7 +94,7 @@ RAPT.Game.prototype = {
 			}
 		}
 	},
-	render : function(c, center, width, height, backgroundCache) {
+	/*render : function(c, center, width, height, backgroundCache) {
 		var halfWidth = width * 0.5;
 		var halfHeight = height * 0.5;
 		var xmin = center.x - halfWidth;
@@ -103,6 +103,11 @@ RAPT.Game.prototype = {
 		var ymax = center.y + halfHeight;
 		c.save();
 		c.translate(-center.x, -center.y);
+
+		RAPT.drawMinX = xmin - 2;
+		RAPT.drawMinY = ymin - 2;
+		RAPT.drawMaxX = xmax + 2;
+		RAPT.drawMaxY = ymax + 2;
 		
 		// draw the background, backgroundCache is an optional argument
 		if (backgroundCache) {
@@ -110,11 +115,13 @@ RAPT.Game.prototype = {
 		} else {
 			RAPT.gameState.world.draw(c, xmin, ymin, xmax, ymax);
 		}
+
+
 		
-		RAPT.gameState.draw(c, xmin, ymin, xmax, ymax);
+		//RAPT.gameState.draw(c, xmin, ymin, xmax, ymax);
 		RAPT.Particle.draw(c);
 		c.restore();
-	},
+	},*/
 	message : function(s){
 		RAPT.MESSAGE.innerHTML = s;
 	},

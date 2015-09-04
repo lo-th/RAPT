@@ -60,6 +60,8 @@ RAPT.GameState.prototype = {
 		this.spawnPointOffset.y = 0.125;
 		// prevents slipping?
 		this.world.spawnPoint.y += 0.01;
+
+		this.startPoint.move(this.world.spawnPoint.x, this.world.spawnPoint.y);
 	},
 	gameWon : function(){
 		var goal = this.world.goal;
@@ -226,7 +228,7 @@ RAPT.GameState.prototype = {
 			this.spawnPointParticleTimer += RAPT.SPAWN_POINT_PARTICLE_FREQ;
 		}
 	},
-	drawSpawnPoint : function (c, point) {
+	/*drawSpawnPoint : function (c, point) {
 		c.strokeStyle = c.fillStyle = 'rgba(255, 255, 255, 0.1)';
 		c.beginPath();
 		c.arc(point.x, point.y, 1, 0, 2 * Math.PI, false);
@@ -252,18 +254,19 @@ RAPT.GameState.prototype = {
 		c.lineTo(point.x + 0.1, point.y - 0.45);
 		c.arc(point.x, point.y - 0.45, 0.2, 0, Math.PI, true);
 		c.fill();
-	},
+	},*/
 	addSpawnPoint:function(center){
-		var start =  new RAPT.SpriteGroup({
+		this.startPoint =  new RAPT.SpriteGroup({
 			name:'start',
 			material:RAPT.MAT_ENEMY,
 			size : 1,
 			nuv:16,
-			uvs:[[15,1]],
-			list:['p1'],
-			sizes: [ [2,2]  ]
+			uvs:[[14,2],[15,2],[14,3],[15,3]],
+			list:['p1', 'p2', 'p3', 'p4'],
+			sizes: [ [1,1]  ],
+			pos: [ [-0.5,0.5,0.1], [0.5,0.5,0.1], [-0.5,-0.5,0.1],[0.5,-0.5,0.1]  ],
 		});
-		start.move(center.x+0.5, center.y+0.5);
+		this.startPoint.move(center.x+0.5, center.y+0.5);
 	},
 	addGoal:function(center){
 		var end =  new RAPT.SpriteGroup({
@@ -277,7 +280,7 @@ RAPT.GameState.prototype = {
 		});
 		end.move(center.x+0.5, center.y+0.5);
 	},
-	drawGoal : function (c, point, time) {
+	/*drawGoal : function (c, point, time) {
 		var percent = time - Math.floor(time);
 		percent = 1 - percent;
 		percent = (percent - Math.pow(percent, 6)) * 1.72;
@@ -296,7 +299,7 @@ RAPT.GameState.prototype = {
 			c.lineTo(point.x + csn * (radius - size), point.y + s * (radius - size));
 			c.fill();
 		}
-	},
+	},*/
 	draw : function(c, xmin, ymin, xmax, ymax) {
 		// no enemy or particle is larger than two cells wide
 		RAPT.drawMinX = xmin - 2;

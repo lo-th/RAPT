@@ -93,9 +93,9 @@ RAPT.World3D = function(canvas){
     var mapEnemy = THREE.ImageUtils.loadTexture( 'textures/enemy.png' );
 
     RAPT.MAT_TEST = new THREE.MeshBasicMaterial( { map:map, color: 0xFFFFFF, shading: THREE.FlatShading, wireframe: false, transparent: true} );
-    RAPT.MAT_TEST2 = new THREE.MeshBasicMaterial( { color: 0x00FFF0, shading: THREE.FlatShading, wireframe: true, transparent: true} );
+    //RAPT.MAT_TEST2 = new THREE.MeshBasicMaterial( { color: 0x00FFF0, shading: THREE.FlatShading, wireframe: true, transparent: true} );
     RAPT.MAT_PLAYER = new THREE.MeshBasicMaterial( { map: mapPlayer, shading: THREE.FlatShading, wireframe: false, transparent: true, side:THREE.DoubleSide, alphaTest: 0.1 } );
-    RAPT.MAT_ENEMY = new THREE.MeshBasicMaterial( { map: mapEnemy, shading: THREE.FlatShading, wireframe: false, transparent: true, side:THREE.DoubleSide, alphaTest: 0.5 } );
+    RAPT.MAT_ENEMY = new THREE.MeshBasicMaterial( { map: mapEnemy, shading: THREE.FlatShading, wireframe: false, transparent: true, side:THREE.DoubleSide, alphaTest: 0.1 } );
     //map2.magFilter = THREE.NearestFilter;
     //map2.minFilter = THREE.LinearMipMapLinearFilter;
 

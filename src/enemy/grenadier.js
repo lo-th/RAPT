@@ -12,7 +12,22 @@ RAPT.Grenadier = function (center, target) {
 	this.actualRecoilDistance = 0;
 	this.targetRecoilDistance = 0;
 
-	this.bodySprite = new RAPT.Sprite();
+	var cc = this.target.color;
+
+	this.sprite =  new RAPT.SpriteGroup({
+		name:'grenadier',
+		material:RAPT.MAT_ENEMY,
+		size : 1,
+		nuv:16,
+		uvs:[[8+cc,0]],
+		list:['p1'],
+		//sizes: [ [0.8,0.8] ]
+		pos:[[0,0,-0.01]]
+	});
+
+	this.sprite.moveto(center);
+
+	/*this.bodySprite = new RAPT.Sprite();
 	this.bodySprite.drawGeometry = function(c) {
 		var barrelLength = 0.25;
 		var outerRadius = 0.25;
@@ -32,7 +47,7 @@ RAPT.Grenadier = function (center, target) {
 		c.closePath();
 		c.fill();
 		c.stroke();
-	};
+	};*/
 }
 
 //RAPT.Grenadier.prototype = new RAPT.SpawningEnemy;
@@ -68,9 +83,10 @@ RAPT.Grenadier.prototype.spawn = function() {
 RAPT.Grenadier.prototype.afterTick = function(seconds) {
 	var position = this.getCenter();
 	if(!this.target.isDead()) {
-		this.bodySprite.angle = this.target.getCenter().add(new RAPT.Vector(0, 3)).sub(position).atan2() + Math.PI / 2;
+		this.sprite.group.rotation.z = this.target.getCenter().add(new RAPT.Vector(0, 3)).sub(position).atan2() + Math.PI / 2;
+		//this.bodySprite.angle = this.target.getCenter().add(new RAPT.Vector(0, 3)).sub(position).atan2() + Math.PI / 2;
 	}
-	this.bodySprite.offsetBeforeRotation = position;
+	//this.bodySprite.offsetBeforeRotation = position;
 
 	if (this.actualRecoilDistance < this.targetRecoilDistance) {
 		this.actualRecoilDistance += 5 * seconds;
@@ -85,11 +101,12 @@ RAPT.Grenadier.prototype.afterTick = function(seconds) {
 		}
 	}
 
-	this.bodySprite.offsetAfterRotation = new RAPT.Vector(0, this.actualRecoilDistance);
+
+	//this.bodySprite.offsetAfterRotation = new RAPT.Vector(0, this.actualRecoilDistance);
 };
 
-RAPT.Grenadier.prototype.draw = function(c) {
+/*RAPT.Grenadier.prototype.draw = function(c) {
 	c.fillStyle = (this.target == RAPT.gameState.playerA) ? 'red' : 'blue';
 	c.strokeStyle = 'black';
 	this.bodySprite.draw(c);
-};
+};*/

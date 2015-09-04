@@ -14,16 +14,14 @@ canvas { position: absolute; top:0; left:0; pointer-events:auto; width:100%; hei
 </style>
 
 <script src="js/three.min.js"></script>
-
 <script src="js/sea3d/SEA3D.js"></script>
 <script src="js/sea3d/SEA3DLZMA.js"></script>
 <script src="js/sea3d/SEA3DLoader.js"></script>
 
 <script src="src/game/game.js"></script>
-
 <script src="src/game/level.js"></script>
-<script src="src/game/camera.js"></script>
-<script src="src/game/backgroundcache.js"></script>
+<!--<script src="src/game/camera.js"></script>
+<script src="src/game/backgroundcache.js"></script>-->
 <script src="src/game/keys.js"></script>
 <script src="src/game/playerstats.js"></script>
 
@@ -138,7 +136,7 @@ function initListNum(){
         b.name = i;
         b.innerHTML = i;//b.name;
         b.addEventListener('click',  function ( e ) {  level.load( levelsList[this.name] );  e.preventDefault();}, false);
-        b.addEventListener('mouseover',  function ( e ) {  this.style.background= '#FF8800';}, false);
+        b.addEventListener('mouseover',  function ( e ) {  this.style.background= '#FF8800'; document.getElementById( 'message' ).innerHTML = levelsList[this.name]; }, false);
         b.addEventListener('mouseout',  function ( e ) {  this.style.background= '#666';}, false);
         list.appendChild( b );
     }

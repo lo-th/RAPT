@@ -39,7 +39,7 @@ RAPT.jumpingKeyframes = [
 RAPT.wallSlidingKeyframe =
 	new RAPT.Keyframe((0.4 - RAPT.PLAYER_WIDTH) / 2, 0).add(0, -10, 150, -130, 140, 50, 50, -30, 50, 130);
 RAPT.crouchingKeyframe =
-	new RAPT.Keyframe(0, -0.2).add(30, -30, 130, -110, -30, 40, 60, -120, 20, 20);
+	new RAPT.Keyframe(0, -0.2).add(30, -30, 130, -110, -30, 40, 60, -130, 20, 20);
 RAPT.fallingKeyframes = [
 	new RAPT.Keyframe(0, 0).add(-20, 5, 10, -30, -120, -30, 40, -20, 120, 30),
 	new RAPT.Keyframe(0, 0).add(-20, 5, 10, -30, -130, -60, 40, -20, 150, 50)
@@ -200,11 +200,14 @@ RAPT.Player.prototype = {
 			parent:['torso' , ''      , 'torso'  , 'uplegl'  , 'torso'  , 'uparml' , 'torso'  , 'uplegr'  , 'torso'  , 'uparmr' ],
 			nuv:4,
 			uvs :  uvs,
-			pos:   [ [0,0.5,0] ,[0,0,0]  , [-0.02,-0.25,1] , [0,-0.5,1]  , [-0.05, 0.4, 2]   , [0,-0.5, 2]     , [0.05,-0.25, -1]  , [0,-0.5, -1]  , [-0.05, 0.4, -2]   , [0,-0.5, -2]   ],
-			center:[ [0,0.25]  ,[0,0]    , [0,-0.25] , [0,-0.25]  , [0,-0.25] , [0,-0.25]   , [0,-0.25]  , [0,-0.25]  , [0,-0.25] , [0,-0.25]     ],
-			//order : ['uplegr', 'uparmr', 'lowlegr', 'lowarmr', 'head'  ,'torso', 'uplegl', 'uparml', 'lowlegl', 'lowarml'],
-			//parent:['torso' , 'torso'  , 'uplegr' , 'uparmr' , 'torso' , ''    , 'torso' , 'torso' , 'uplegl' , 'uparml' ],
-			
+			pos: [  [0,0.5,0] ,[0,0,0], 
+			        [-0.02,-0.26,1]  , [0,-0.5,1]   , [-0.05, 0.4, 2]   , [0,-0.5, 2],
+			        [0.05,-0.25, -1] , [0,-0.5, -1] , [-0.05, 0.4, -2]  , [0,-0.5, -2]   
+			    ],
+			center:[ [0,0.25]  ,[0,0],
+			         [0,-0.25] , [0,-0.25]  , [0,-0.25] , [0,-0.25], 
+			         [0,-0.25]  , [0,-0.25]  , [0,-0.25] , [0,-0.25]     
+			    ]
 		});
 	},
 	
@@ -275,8 +278,7 @@ RAPT.Player.prototype = {
 		// Do a co-op jump if a bunch of conditions hold: Both players on floor, the other player is crouching, and the two are colliding
 		var otherPlayer = RAPT.gameState.getOtherPlayer(this);
 
-		if(otherPlayer.crouchKey && !otherPlayer.isDead() && this.state == RAPT.PLAYER_STATE_FLOOR && otherPlayer.state == RAPT.PLAYER_STATE_FLOOR)
-		{
+		if(otherPlayer.crouchKey && !otherPlayer.isDead() && this.state == RAPT.PLAYER_STATE_FLOOR && otherPlayer.state == RAPT.PLAYER_STATE_FLOOR){
 			// Other player not moving, this player moving fast enough in x
 			if(otherPlayer.velocity.lengthSquared() < 0.01 &&
 				Math.abs(this.velocity.x) > 4 /* && TODO: HAD TO COMMENT THIS OUT BECAUSE Y VELOCITY IS BIGGER THAN 0.1, WHY IS THIS
@@ -285,17 +287,14 @@ RAPT.Player.prototype = {
 				var relativePos = this.getCenter().sub(otherPlayer.getCenter());
 
 				// if y-position within 0.01 and x-position within 0.1
-				if(Math.abs(relativePos.y) <= 0.01 && Math.abs(relativePos.x) < 0.1)
-				{
+				if(Math.abs(relativePos.y) <= 0.01 && Math.abs(relativePos.x) < 0.1){
 					this.velocity = new RAPT.Vector(0, RAPT.PLAYER_SUPER_JUMP_SPEED);
 					this.isSuperJumping = true;
 				}
 			}
 
 			// Change the spawn point if the players are within 1 unit and we have waited for at least 1 second
-			if(this.getCenter().sub(otherPlayer.getCenter()).lengthSquared() < 1 &&
-				this.crouchTimer > 1 && otherPlayer.crouchTimer >= this.crouchTimer)
-			{
+			if(this.getCenter().sub(otherPlayer.getCenter()).lengthSquared() < 1 && this.crouchTimer > 1 && otherPlayer.crouchTimer >= this.crouchTimer){
 				RAPT.gameState.setSpawnPoint(otherPlayer.getCenter());
 			}
 		}
@@ -524,8 +523,6 @@ RAPT.Player.prototype = {
 
 		var i = 500;
 		while(i--){
-		//for(var i = 0; i < 500; i++) {
-			//var direction = Vector.fromAngle(RAPT.lerp(0, 2*Math.PI, Math.random()));
 			var direction = new RAPT.Vector().fromAngle(RAPT.lerp(0, 2*Math.PI, Math.random()));
 			direction = this.velocity.add(direction.mul(RAPT.lerp(1, 10, Math.random())));
 
@@ -620,20 +617,15 @@ RAPT.Player.prototype = {
 			if(slowDownScale > 1) slowDownScale = 1;
 		}
 
-		// update 3d rotation
+		// update 3d sprite rotation
 		var i = this.group.length;
 		while(i--){
 			this.group.sprite[i].rotation.z = (frame.angles[i] * slowDownScale);
 		}
 
 		var offset = frame.center.mul(slowDownScale);
-		//this.sprites[RAPT.PLAYER_TORSO].offsetBeforeRotation = new RAPT.Vector(this.getCenter().x + offset.x * (this.facingRight ? -1 : 1), this.getCenter().y + offset.y);
-		//this.sprites[RAPT.PLAYER_TORSO].flip = !this.facingRight;
-
 		var pos = this.getCenter();
-		//pos.y = this.getCenter().y + offset.y
 		this.group.move(pos.x + offset.x * (this.facingRight ? -1 : 1), pos.y + offset.y);
-		//this.group.move(pos.x + offset.x, pos.y + offset.y);
 		this.group.flip(this.facingRight);
 	},
 	getInfo : function(){
