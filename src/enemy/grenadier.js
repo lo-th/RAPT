@@ -21,33 +21,10 @@ RAPT.Grenadier = function (center, target) {
 		nuv:16,
 		uvs:[[8+cc,0]],
 		list:['p1'],
-		//sizes: [ [0.8,0.8] ]
 		pos:[[0,0,-0.01]]
 	});
 
 	this.sprite.moveto(center);
-
-	/*this.bodySprite = new RAPT.Sprite();
-	this.bodySprite.drawGeometry = function(c) {
-		var barrelLength = 0.25;
-		var outerRadius = 0.25;
-		var innerRadius = 0.175;
-
-		c.beginPath();
-		c.moveTo(-outerRadius, -barrelLength);
-		c.lineTo(-innerRadius, -barrelLength);
-		c.lineTo(-innerRadius, -0.02);
-		c.lineTo(0, innerRadius);
-		c.lineTo(innerRadius, -0.02);
-		c.lineTo(innerRadius, -barrelLength);
-		c.lineTo(outerRadius, -barrelLength);
-		c.lineTo(outerRadius, 0);
-		c.lineTo(0, outerRadius + 0.02);
-		c.lineTo(-outerRadius, 0);
-		c.closePath();
-		c.fill();
-		c.stroke();
-	};*/
 }
 
 //RAPT.Grenadier.prototype = new RAPT.SpawningEnemy;

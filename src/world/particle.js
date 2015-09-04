@@ -55,49 +55,6 @@ RAPT.ParticleInstance.prototype = {
 		}
 		return (this.m_bounces >= 0);
 	},
-	
-	/*draw : function(c) {
-		switch(this.m_type) {
-		case RAPT.PARTICLE_CIRCLE:
-			c.fillStyle = this.cssRGBA(this.m_red, this.m_green, this.m_blue, this.m_alpha);
-			c.beginPath();
-			c.arc(this.m_position.x, this.m_position.y, this.m_radius, 0, 2 * Math.PI, false);
-			c.fill();
-			break;
-
-		case RAPT.PARTICLE_TRIANGLE:
-			var v1 = this.m_position.add(this.m_velocity.mul(0.04));
-			var v2 = this.m_position.sub(this.m_velocity.flip().mul(0.01));
-			var v3 = this.m_position.add(this.m_velocity.flip().mul(0.01));
-			c.fillStyle = this.cssRGBA(this.m_red, this.m_green, this.m_blue, this.m_alpha);
-			c.beginPath();
-			c.moveTo(v1.x, v1.y);
-			c.lineTo(v2.x, v2.y);
-			c.lineTo(v3.x, v3.y);
-			c.closePath();
-			c.fill();
-			break;
-			
-		case RAPT.PARTICLE_LINE:
-			var dx = Math.cos(this.m_angle) * this.m_radius;
-			var dy = Math.sin(this.m_angle) * this.m_radius;
-			c.strokeStyle = this.cssRGBA(this.m_red, this.m_green, this.m_blue, this.m_alpha);
-			c.beginPath();
-			c.moveTo(this.m_position.x - dx, this.m_position.y - dy);
-			c.lineTo(this.m_position.x + dx, this.m_position.y + dy);
-			c.stroke();
-			break;
-			
-		case RAPT.PARTICLE_CUSTOM:
-			c.fillStyle = this.cssRGBA(this.m_red, this.m_green, this.m_blue, this.m_alpha);
-			c.save();
-			c.translate(this.m_position.x, this.m_position.y);
-			c.rotate(this.m_angle);
-			this.m_drawFunc(c);
-			c.restore();
-			break;
-		}
-	},*/
 
 	randOrTakeFirst : function (min, max) {
 		return (typeof max !== 'undefined') ? RAPT.randInRange(min, max) : min;
@@ -143,7 +100,8 @@ RAPT.ParticleInstance.prototype = {
 	angularVelocity : function(min, max) { this.m_angularVelocity = this.randOrTakeFirst(min, max); return this; },
 	position : function(position) { this.m_position = position; return this; },
 	velocity : function(velocity) { this.m_velocity = velocity; return this; }
-}
+};
+
 // wrap in anonymous function for private variables
 RAPT.Particle = (function() {
 	var geometry = null;
@@ -179,7 +137,8 @@ RAPT.Particle = (function() {
 		while(v--){
 			positions[v*3+0] = 0.0;
 	    	positions[v*3+1] = 0.0;
-			colors[v*4+0] = 0.0;
+	    	positions[v*3+2] = 0.0;
+			colors[v*4+3] = 0.0;
 		}
 	};
 
@@ -190,7 +149,6 @@ RAPT.Particle = (function() {
 		positions = new Float32Array( n * 3 );
 	    uvpos = new Float32Array( n * 2 );
 	    colors = new Float32Array( n * 4 );
-	    //values_size = new Float32Array( n );
 	    angles = new Float32Array( n );
 	    sizes = new Float32Array( n );
 
@@ -221,7 +179,7 @@ RAPT.Particle = (function() {
 	        //attributes:[ 'size', 'colors', 'uvPos', 'angle' ],
 			uniforms:{
 			    ntiles :  { type: 'f', value: 8.0 },
-			    scale :  { type: 'f', value: 60.0 },
+			    scale :  { type: 'f', value: 800.0 },
 			    map: { type: 't', value: null }
 			},
 			fragmentShader:[
@@ -256,7 +214,8 @@ RAPT.Particle = (function() {
 			    '    vColor = colors;',
 			    '    vAngle = angle;',
 			    '    vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );',
-			    '    gl_PointSize = size * scale;',
+			    //'    gl_PointSize = size * scale;',
+			    '    gl_PointSize = size * ( scale / length( mvPosition.xyz ) );',
 			    '    gl_Position = projectionMatrix * mvPosition;',
 			    '}'
 			].join('\n'),
@@ -272,9 +231,7 @@ RAPT.Particle = (function() {
 	    var particlesCloud = new THREE.PointCloud( geometry, particleMaterial );
 	    particlesCloud.position.set(0,0,0.01);
 	    particlesCloud.frustumCulled = false;
-	    console.log("particle defined")
 		scene.add( particlesCloud );
-		console.log("added particle")
 	};
 
 	RAPT.Particle.tick = function(seconds) {

@@ -52,7 +52,7 @@ RAPT.BouncyRocketLauncher.prototype.spawn = function() {
 RAPT.BouncyRocketLauncher.prototype.afterTick = function(seconds) {
 	var position = this.getCenter();
 	if (!this.target.isDead()) {
-		this.sprite.group.rotation.z = (position.sub(this.target.getCenter())).atan2();
+		this.sprite.group.rotation.z = (position.sub(this.target.getCenter())).atan2() + RAPT.PI;
 		//this.bodySprite.angle = (position.sub(this.target.getCenter())).atan2();
 	}
 	//this.bodySprite.offsetBeforeRotation = position;
