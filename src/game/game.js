@@ -125,7 +125,7 @@ RAPT.Game.prototype = {
 	message : function(s){
 		RAPT.MESSAGE.innerHTML = s;
 	},
-	drawTextBox : function(c, textArray, xCenter, yCenter, textSize) {
+	/*drawTextBox : function(c, textArray, xCenter, yCenter, textSize) {
 		var numLines = textArray.length;
 		if (numLines < 1) return;
 
@@ -159,7 +159,7 @@ RAPT.Game.prototype = {
 			c.fillText(textArray[i], xCenter, yCurr);
 			yCurr += lineHeight;
 		}
-	},
+	},*/
 
 	draw3d : function(){
 		var mid = this.width2*0.25;
