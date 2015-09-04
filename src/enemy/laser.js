@@ -14,9 +14,7 @@ RAPT.Laser = function (center, direction) {
 		size : 1,
 		nuv:16,
 		uvs:[[4,2]],
-		color:0X44CC66,
-		list:['p1'],
-		//sizes: [ [0.7,0.7] ]
+		list:['p1']
 	});
 
 	this.sprite.moveto(center);
@@ -24,7 +22,6 @@ RAPT.Laser = function (center, direction) {
 
 }
 
-//RAPT.Laser.prototype = new RAPT.FreefallEnemy;
 RAPT.Laser.prototype = Object.create( RAPT.FreefallEnemy.prototype );
 
 RAPT.Laser.prototype.move = function(seconds) {
@@ -35,7 +32,7 @@ RAPT.Laser.prototype.move = function(seconds) {
 RAPT.Laser.prototype.reactToWorld = function(contact) {
 	if (this.bouncesLeft <= 0) {
 		this.setDead(true);
-		this.sprite.remove();
+		
 		var position = this.getCenter();
 		for (var i = 0; i < 20; ++i) {
 			var angle = RAPT.randInRange(0, 2 * Math.PI);
@@ -51,11 +48,7 @@ RAPT.Laser.prototype.reactToWorld = function(contact) {
 	//
 };
 
-RAPT.Laser.prototype.draw = function(c) {
-	/*var heading = this.velocity.unit().mul(RAPT.LASER_RADIUS);
-	var segment = new RAPT.Segment(this.getCenter().sub(heading), this.getCenter().add(heading));
-	c.lineWidth = .07;
-	c.strokeStyle = 'white';
-	segment.draw(c);
-	c.lineWidth = .02;*/
+
+RAPT.Laser.prototype.onDeath = function() {
+	this.sprite.remove();
 };
