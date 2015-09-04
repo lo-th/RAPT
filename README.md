@@ -5,7 +5,7 @@ in pure javascript no extra libs.
 
 It's converted to webgl 3d with the power of three.js and sea3d.<br>
 The main goal is create most simple game engine for 2D/3D games<br>
-and find the best optimization Technics.
+and find the best optimization technics.
 
 Next update<br>
 _ puppet editor bone tool with keyframe and inverse kinematics<br>
@@ -15,5 +15,5 @@ _ advanced level editor 'in game'<br>
 _ add more gameplay options: fight with sword, more monster, gamepad...<br>
 _ random level/dungeon creator like Terraria or starbound...<br>
 
-So lets play<br>
+So let's play<br>
 [**START**](http://lo-th.github.io/RAPT/index.html)
