@@ -25,7 +25,6 @@ RAPT.MultiGun = function (center) {
 		size : 1,
 		nuv:16,
 		list:['p1', 'p2', 'p3', 'p4'],
-		//sizes: [ [1,0.5]  ],
 		uvs:[[3,3], [4,3], [5,3], [6,3]]
 	});
 

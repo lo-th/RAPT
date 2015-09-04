@@ -61,7 +61,7 @@ RAPT.GameState.prototype = {
 		// prevents slipping?
 		this.world.spawnPoint.y += 0.01;
 
-		this.startPoint.move(this.world.spawnPoint.x, this.world.spawnPoint.y);
+		this.startPoint.move(this.world.spawnPoint.x-0.5, this.world.spawnPoint.y-0.5);
 	},
 	gameWon : function(){
 		var goal = this.world.goal;
@@ -264,9 +264,12 @@ RAPT.GameState.prototype = {
 			uvs:[[14,2],[15,2],[14,3],[15,3]],
 			list:['p1', 'p2', 'p3', 'p4'],
 			sizes: [ [1,1]  ],
-			pos: [ [-0.5,0.5,0.1], [0.5,0.5,0.1], [-0.5,-0.5,0.1],[0.5,-0.5,0.1]  ],
+			pos: [ [0,1,0.1], [1,1,0.1], [0,0,0.1],[1,0,0.1]  ],
+
+			//pos: [ [-0.5,0.5,0.1], [0.5,0.5,0.1], [-0.5,-0.5,0.1],[0.5,-0.5,0.1]  ],
 		});
-		this.startPoint.move(center.x+0.5, center.y+0.5);
+		//this.startPoint.move(center.x+0.5, center.y+0.5);
+		this.startPoint.moveto(center);
 	},
 	addGoal:function(center){
 		var end =  new RAPT.SpriteGroup({
@@ -276,9 +279,10 @@ RAPT.GameState.prototype = {
 			nuv:16,
 			uvs:[[14,1]],
 			list:['p1'],
-			sizes: [ [1,1]  ]
+			sizes: [ [1,1]  ],
+			pos:[[0.5,0.5,-0.24]]
 		});
-		end.move(center.x+0.5, center.y+0.5);
+		end.moveto(center);
 	},
 	/*drawGoal : function (c, point, time) {
 		var percent = time - Math.floor(time);
