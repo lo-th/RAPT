@@ -1,7 +1,6 @@
 RAPT.ONE_WAY = 0;
 RAPT.TWO_WAY = 1;
 
-
 RAPT.Door = function(edge0, edge1, cell0, cell1, diag) {
 	this.cells = [cell0, cell1];
 	this.edges = [edge0, edge1];
@@ -11,9 +10,11 @@ RAPT.Door = function(edge0, edge1, cell0, cell1, diag) {
 	this.d = [];
 	if(cell0 && edge0) this.add3dDoor(0, cell0, edge0);
 	if(cell1 && edge1) this.add3dDoor(1, cell1, edge1);
-	
 
-	//RAPT.W3D.addDoor(this.edges, this.cells);
+	this.toOpen = false;
+	this.toClose = false;
+
+	this.posZ = 0;
 }
 RAPT.Door.prototype = {
 	constructor: RAPT.Door,
@@ -28,13 +29,34 @@ RAPT.Door.prototype = {
 			if (cell === null) return;
 			cell.addEdge(new RAPT.Edge(this.edges[i].getStart(), this.edges[i].getEnd(), this.edges[i].color));
 
-			//.x, cell.y, this.edges[i].getStart(), this.edges[i].getEnd(), this.edges[i].color);
-			//else this.add3dDoor(i, cell.x, cell.y, this.edges[0].getStart(), this.edges[0].getEnd(), this.edges[0].color);
-
+			this.toClose = true;
 
 			if (kill) RAPT.gameState.killAll(this.edges[i]);
 			RAPT.gameState.recordModification();
 		}
+	},
+	tick : function(seconds) {
+
+		if(this.toOpen){
+			if(this.posZ > -0.5){
+				this.posZ -= 0.01;
+			    if(this.d[0])this.d[0].position.z = this.posZ;
+			    if(this.d[1])this.d[1].position.z = this.posZ;
+			}else{
+				this.toOpen = false;
+			}
+		}
+
+		if(this.toClose){
+			if(this.posZ < 0){
+				this.posZ += 0.01;
+			    if(this.d[0])this.d[0].position.z = this.posZ;
+			    if(this.d[1])this.d[1].position.z = this.posZ;
+			}else{
+				this.toClose = false;
+			}
+		}
+
 	},
 	doorRemove : function(i) {
 		if (this.edges[i] !== null && this.doorExists(i)) {
@@ -43,6 +65,8 @@ RAPT.Door.prototype = {
 			cell.removeEdge(this.edges[i]);
 			this.remove3dDoor(i);
 			RAPT.gameState.recordModification();
+			//this.d[i].position.z = -2.5;
+			this.toOpen = true;
 		}
 	},
 	add3dDoor:function(i, cell, edge){
@@ -88,8 +112,6 @@ RAPT.Door.prototype = {
 	},
 	remove3dDoor:function(i){
 		RAPT.W3D.scene.add(this.d[i]);
-
-
 	},
 	act : function(behavior, force, kill) {
 		for (var i = 0; i < 2; ++i) {

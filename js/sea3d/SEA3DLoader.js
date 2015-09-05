@@ -1261,7 +1261,7 @@ THREE.SEA3D.prototype.readGeometryBuffer = function(sea) {
 		geo.computeVertexNormals();	
 	
 	if (this.config.tangent && !sea.tangent)
-		geo.computeTangents();
+		//geo.computeTangents();
 	
 	if (this.config.bounding)
 	{

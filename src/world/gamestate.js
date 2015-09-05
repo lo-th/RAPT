@@ -202,6 +202,11 @@ RAPT.GameState.prototype = {
 		this.playerA.tick(seconds);
 		this.playerB.tick(seconds);
 
+		i = this.doors.length;
+		while(i--){
+			this.doors[i].tick(seconds);
+		}
+
 		i = this.enemies.length;
 		while(i--){
 			this.enemies[i].tick(seconds);

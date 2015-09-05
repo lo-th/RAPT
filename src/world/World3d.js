@@ -3,7 +3,10 @@ RAPT.MAT_PLAYER = null;
 RAPT.GEO = {};
 
 RAPT.Loader = function(file, callback){
-    var loader = new THREE.SEA3D( { parser : THREE.SEA3D.DEFAULT } );
+    var loader = new THREE.SEA3D( { 
+        //parser : THREE.SEA3D.DEFAULT 
+        //container : null
+    } );
     loader.onComplete = function( e ) {
         var i = loader.meshes.length, m;
         while(i--){
