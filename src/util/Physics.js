@@ -927,3 +927,269 @@ RAPT.CollisionDetector.prototype = {
 		return innermost;
 	}
 }
+
+//------------------------------
+// AABB
+//------------------------------
+
+RAPT.makeAABB = function(c, width, height) {
+	var center = new RAPT.Vector( 0, 0);
+	if(c)center = new RAPT.Vector( c.x, c.y);
+	//var center = new RAPT.Vector(c.x || 0,c.y || 0);
+	var halfSize = new RAPT.Vector(width * 0.5, height * 0.5);
+	var lowerLeft = center.sub(halfSize);
+	var upperRight = center.add(halfSize);
+	return new RAPT.AABB(lowerLeft, upperRight);
+}
+
+RAPT.AABB = function (lowerLeft, upperRight) {
+	this.lowerLeft = new RAPT.Vector(
+		Math.min(lowerLeft.x, upperRight.x),
+		Math.min(lowerLeft.y, upperRight.y));
+	this.size = new RAPT.Vector(
+		Math.max(lowerLeft.x, upperRight.x),
+		Math.max(lowerLeft.y, upperRight.y)).sub(this.lowerLeft);
+}
+
+RAPT.AABB.prototype = {
+	constructor: RAPT.AABB,
+
+	getTop : function() { return this.lowerLeft.y + this.size.y; },
+	getLeft : function() { return this.lowerLeft.x; },
+	getRight : function() { return this.lowerLeft.x + this.size.x; },
+	getBottom : function() { return this.lowerLeft.y; },
+	getWidth : function() { return this.size.x; },
+	getHeight : function() { return this.size.y; },
+	copy : function() {
+		return new RAPT.AABB(this.lowerLeft, this.lowerLeft.add(this.size));
+	},
+	getPolygon : function() {
+		var center = this.getCenter();
+		var halfSize = this.size.div(2);
+		return new RAPT.Polygon(center,
+			new RAPT.Vector(+halfSize.x, +halfSize.y),
+			new RAPT.Vector(-halfSize.x, +halfSize.y),
+			new RAPT.Vector(-halfSize.x, -halfSize.y),
+			new RAPT.Vector(+halfSize.x, -halfSize.y));
+	},
+	getType : function() {
+		return RAPT.SHAPE_AABB;
+	},
+	getAabb : function() {
+		return this;
+	},
+	moveBy : function(delta) {
+		this.lowerLeft = this.lowerLeft.add(delta);
+	},
+	moveTo : function(destination) {
+		this.lowerLeft = destination.sub(this.size.div(2));
+	},
+	getCenter : function() {
+		return this.lowerLeft.add(this.size.div(2));
+	},
+	expand : function(margin) {
+		var marginVector = new RAPT.Vector(margin, margin);
+		return new RAPT.AABB(this.lowerLeft.sub(marginVector), this.lowerLeft.add(this.size).add(marginVector));
+	},
+	union : function(aabb) {
+		return new RAPT.AABB(this.lowerLeft.minComponents(aabb.lowerLeft), this.lowerLeft.add(this.size).maxComponents(aabb.lowerLeft.add(aabb.size)));
+	},
+	include : function(point) {
+		return new RAPT.AABB(this.lowerLeft.minComponents(point), this.lowerLeft.add(this.size).maxComponents(point));
+	},
+	offsetBy : function(offset) {
+		return new RAPT.AABB(this.lowerLeft.add(offset), this.lowerLeft.add(this.size).add(offset));
+	},
+
+	draw : function(c) {
+		c.strokeStyle = 'black';
+		c.strokeRect(this.lowerLeft.x, this.lowerLeft.y, this.size.x, this.size.y);
+	}
+}
+
+
+
+//------------------------------
+// EDGEQUAD
+//------------------------------
+
+
+RAPT.EdgeQuad = function () {
+	this.nullifyEdges();
+	this.quantities = [0, 0, 0, 0];
+}
+
+RAPT.EdgeQuad.prototype = {
+	constructor: RAPT.EdgeQuad,
+	nullifyEdges : function() {
+		this.edges = [null, null, null, null];
+	},
+	minimize : function(edge, quantity) {
+		var orientation = edge.getOrientation();
+		if(this.edges[orientation] == null || quantity < this.quantities[orientation]) {
+			this.edges[orientation] = edge;
+			this.quantities[orientation] = quantity;
+		}
+	},
+	throwOutIfGreaterThan : function(minimum) {
+		for(var i = 0; i < 4; i++) {
+			if(this.quantities[i] > minimum) {
+				this.edges[i] = null;
+			}
+		}
+	}
+}
+
+//------------------------------
+// SEGMENT
+//------------------------------
+
+RAPT.Segment = function (start, end) {
+	this.start = start;
+	this.end = end;
+	this.normal = end.sub(start).flip().unit();
+}
+RAPT.Segment.prototype = {
+	constructor: RAPT.Segment,
+	offsetBy : function(offset) {
+		return new RAPT.Segment(this.start.add(offset), this.end.add(offset));
+	},
+	/*draw : function(c) {
+		c.beginPath();
+		c.moveTo(this.start.x, this.start.y);
+		c.lineTo(this.end.x, this.end.y);
+		c.stroke();
+	}*/
+}
+
+
+
+//------------------------------
+// POLYGON
+//------------------------------
+
+
+/**
+  *  For the polygon class, the segments and the bounding box are all relative to the center of the polygon.
+  *  That is, when the polygon moves, the center is the only thing that changes.  This is to prevent
+  *  floating-point arithmetic errors that would be caused by maintaining several sets of absolute coordinates.
+  *
+  *  Segment i goes from vertex i to vertex ((i + 1) % vertices.length)
+  *
+  *  When making a new polygon, please declare the vertices in counterclockwise order.	I'm not sure what will
+  *  happen if you don't do that.
+  */
+
+RAPT.Polygon = function (center, vertices) {
+	// center is the first argument, the next arguments are the vertices relative to the center
+	//arguments = Array.prototype.slice.call(arguments);
+	var arg = Array.prototype.slice.call(arguments);
+	//this.center = arguments.shift();
+    //this.vertices = arguments;
+	this.center = arg.shift();
+	this.vertices = arg;
+
+	this.segments = [];
+	for(var i = 0; i < this.vertices.length; i++) {
+		this.segments.push(new RAPT.Segment(this.vertices[i], this.vertices[(i + 1) % this.vertices.length]));
+	}
+
+	this.boundingBox = new RAPT.AABB(this.vertices[0], this.vertices[0]);
+	this.initializeBounds();
+}
+
+RAPT.Polygon.prototype = {
+	constructor: RAPT.Polygon,
+	copy : function() {
+		var polygon = new RAPT.Polygon(this.center, this.vertices[0]);
+		polygon.vertices = this.vertices;
+		polygon.segments = this.segments;
+		polygon.initializeBounds();
+		return polygon;
+	},
+	getType : function() {
+		return RAPT.SHAPE_POLYGON;
+	},
+	moveBy : function(delta) {
+		this.center = this.center.add(delta);
+	},
+	moveTo : function(destination) {
+		this.center = destination;
+	},
+	getVertex : function(i) {
+		return this.vertices[i].add(this.center);
+	},
+	getSegment : function(i) {
+		return this.segments[i].offsetBy(this.center);
+	},
+	getAabb : function() {
+		return this.boundingBox.offsetBy(this.center);
+	},
+	getCenter : function() {
+		return this.center;
+	},
+
+	// expand the aabb and the bounding circle to contain all vertices
+	initializeBounds : function() {
+		for(var i = 0; i < this.vertices.length; i++) {
+			var vertex = this.vertices[i];
+
+			// expand the bounding box to include this vertex
+			this.boundingBox = this.boundingBox.include(vertex);
+		}
+	},
+	/*draw : function(c) {
+		c.strokeStyle = 'black';
+		c.beginPath();
+		for(var i = 0; i < this.vertices.length; i++) {
+			c.lineTo(this.vertices[i].x + this.center.x, this.vertices[i].y + this.center.y);
+		}
+		c.closePath();
+		c.stroke();
+	}*/
+}
+
+
+
+//------------------------------
+// CIRCLE
+//------------------------------
+
+
+RAPT.Circle = function (center, radius) {
+	this.center = center || new RAPT.Vector(0,0);
+	this.radius = radius;
+}
+
+RAPT.Circle.prototype = {
+	constructor: RAPT.Circle,
+	copy : function() {
+		return new RAPT.Circle(this.center, this.radius);
+	},
+	getType : function() {
+		return RAPT.SHAPE_CIRCLE;
+	},
+	getAabb : function() {
+		var radiusVector = new RAPT.Vector(this.radius, this.radius);
+		return new RAPT.AABB(this.center.sub(radiusVector), this.center.add(radiusVector));
+	},
+	getCenter : function() {
+		return this.center;
+	},
+	moveBy : function(delta) {
+		this.center = this.center.add(delta);
+	},
+	moveTo : function(destination) {
+		this.center = destination;
+	},
+	offsetBy : function(offset) {
+		return new RAPT.Circle(this.center.add(offset), this.radius);
+	},
+	/*draw : function(c) {
+		c.strokeStyle = 'black';
+		c.beginPath();
+		c.arc(this.center.x, this.center.y, this.radius, 0, Math.PI*2, false);
+		c.stroke();
+	}*/
+}
+

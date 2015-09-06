@@ -22,7 +22,7 @@ RAPT.Loader = function(file, callback){
 RAPT.World3D = function(canvas){
 
     this.debug = document.getElementById( 'debug' );
-    this.vs = {w:window.innerWidth, h:window.innerHeight, r:.0084, mw:0, mh:0, d:10};
+    this.vs = {w:window.innerWidth, h:window.innerHeight, r:.0084, mw:0, mh:0, d:10, fov:60};
     this.split = false;
     this.is2D = false;
 
@@ -114,7 +114,7 @@ RAPT.World3D.prototype = {
             //this.distance = this.vs.d;
         } else {
             var rz = this.vs.w/this.vs.h;
-            var fov = 55;
+            var fov = this.vs.fov;//55;
             this.camera[0] = new THREE.PerspectiveCamera( fov, rz, 0.1, 100 );
             this.camera[1] = new THREE.PerspectiveCamera( fov, rz, 0.1, 100 );
             this.camera[2] = new THREE.PerspectiveCamera( fov, rz, 0.1, 100 );
@@ -134,6 +134,21 @@ RAPT.World3D.prototype = {
 
         this.vs.d -= delta/6;//(0.5/this.vs.r)*2;
 
+        var distance = this.vs.h/(2*Math.tan( this.vs.fov*(Math.PI/360)) );
+
+        var camscale = Math.tan(( this.vs.fov / 2 ) / 180 * Math.PI);
+        var fix = 1 / (camscale / (camscale + this.vs.d));
+
+        
+        var camfix = this.vs.w / 2 / camscale;
+        //var rz = 60 - this.vs.d/0.16;
+        //RAPT.gameScale += delta;
+        var n = (RAPT.gameScale + (delta/3)).toFixed(0)*1;
+
+        RAPT.gameScale = n;
+        RAPT.game.upGameScale();
+
+        console.log(this.vs.d, RAPT.gameScale, distance);
         //RAPT.gameScale -= delta
 
         this.camera[0].position.z = this.vs.d;

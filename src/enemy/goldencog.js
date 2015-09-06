@@ -56,7 +56,7 @@ RAPT.GoldenCog.prototype.afterTick = function(seconds) {
 	//this.timeSinceStart += seconds;
 };
 
-RAPT.GoldenCog.prototype.draw = function(c) {
+/*RAPT.GoldenCog.prototype.draw = function(c) {
 	var position = this.getCenter();
 	RAPT.drawGoldenCog(c, position.x, position.y, this.timeSinceStart);
-};
+};*/

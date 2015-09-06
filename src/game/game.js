@@ -49,6 +49,10 @@ RAPT.Game.prototype = {
 		this.playerB = RAPT.gameState.playerB;
 		//his.camera = new RAPT.Camera(RAPT.gameState.playerA, RAPT.gameState.playerB, w / RAPT.gameScale, h / RAPT.gameScale);
 	},
+	upGameScale:function(){
+		this.width2 = this.width / RAPT.gameScale;
+		this.height2 = this.height / RAPT.gameScale;
+	},
 	tick : function(seconds) {
 		// when the screen isn't split, standing at the original spawn point:
 		// * Triple Threat
@@ -132,7 +136,7 @@ RAPT.Game.prototype = {
 			//if(centerA.y<=centerB.y){
 				//this.w3d.upCamera(centerB.x, centerB.y, 2);
 				//this.w3d.upCamera(centerA.x, centerA.y, 1);
-
+				RAPT.W3D.upCamera(center.x, center.y, 0);
 				RAPT.W3D.upCamera(centerA.x, centerA.y, 1);
 				RAPT.W3D.upCamera(centerB.x, centerB.y, 2);
 			//} else {
