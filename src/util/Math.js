@@ -1,21 +1,8 @@
-RAPT.adjustAngleToTarget = function (currAngle, targetAngle, maxRotation) {
-	if (targetAngle - currAngle > Math.PI) currAngle += 2 * Math.PI;
-	else if (currAngle - targetAngle > Math.PI) currAngle -= 2 * Math.PI;
-
-	var deltaAngle = targetAngle - currAngle;
-	if (Math.abs(deltaAngle) > maxRotation) deltaAngle = (deltaAngle > 0 ? maxRotation : -maxRotation);
-	currAngle += deltaAngle;
-	currAngle -= Math.floor(currAngle / (2 * Math.PI)) * (2 * Math.PI);
-	return currAngle;
-}
-
 
 RAPT.random = Math.random;
 RAPT.lerp = function (a, b, percent) { return a + (b - a) * percent; }
 RAPT.randInRange = function (a, b) { return RAPT.lerp(a, b, RAPT.random()); }
 RAPT.randInt = function (a, b, n) { return RAPT.lerp(a, b, RAPT.random()).toFixed(n || 0)*1;}
-
-
 
 RAPT.PI = Math.PI;
 RAPT.PI90 = RAPT.PI*0.5;
@@ -25,7 +12,20 @@ RAPT.TwoPI = 2.0 * RAPT.PI;
 RAPT.ToRad = RAPT.PI / 180;
 RAPT.ToDeg = 180 / RAPT.PI;
 
+
+RAPT.adjustAngleToTarget = function (currAngle, targetAngle, maxRotation) {
+    if (targetAngle - currAngle > RAPT.PI) currAngle += RAPT.TwoPI;
+    else if (currAngle - targetAngle > RAPT.PI) currAngle -= RAPT.TwoPI;
+
+    var deltaAngle = targetAngle - currAngle;
+    if (Math.abs(deltaAngle) > maxRotation) deltaAngle = (deltaAngle > 0 ? maxRotation : -maxRotation);
+    currAngle += deltaAngle;
+    currAngle -= Math.floor(currAngle / RAPT.TwoPI) * RAPT.TwoPI;
+    return currAngle;
+}
+
 // class Vector
+
 RAPT.Vector = function (x, y) {
 	this.x = x || 0;
 	this.y = y || 0;
