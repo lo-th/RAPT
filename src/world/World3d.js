@@ -237,22 +237,23 @@ RAPT.World3D.prototype = {
         var tmpGeometry = new THREE.Geometry();
         var matrix = new THREE.Matrix4();
         var rmatrix = new THREE.Matrix4();
-        var j, edges, type;
+        var x, y, type;
+        var j, edges, etype;
         var ne = world.totalEdge;
         var nx = world.cells.length;
         var ny = world.cells[0].length;
         var name = 'p0'
 
-        for (var x = 0; x < nx; x++) {
-            for (var y = 0; y < ny; y++) {
+        for (x = 0; x < nx; x++) {
+            for (y = 0; y < ny; y++) {
 
-                celltype = world.getCellType(x,y);
-                edges = world.cells[x][y].edges;
+                type = world.getCellType(x,y);
+                edges = world.getEdges(x,y);
 
-                if(celltype===0) {
+                if(type===0) {
                     matrix.makeTranslation(x+ 0.5,y+ 0.5, -0.25);
                     tmpGeometry.merge(RAPT.GEO.back, matrix);
-                } else if(celltype===1){
+                } else if(type===1){
                     matrix.makeTranslation(x+ 0.5,y+ 0.5, 0.25);
                     if(world.getCellNE(x,y)) tmpGeometry.merge(RAPT.GEO.front, matrix)
                 }
@@ -261,11 +262,11 @@ RAPT.World3D.prototype = {
                     j = edges.length;
                     while(j--){
                         matrix.makeTranslation(x+ 0.5,y+ 0.5,0);
-                        type = edges[j].type;
+                        etype = edges[j].type;
 
-                        if(type<4){
+                        if(etype<4){
                             rmatrix.makeRotationZ(0);
-                            switch(type){
+                            switch(etype){
                                 case 1:rmatrix.makeRotationZ(-RAPT.PI90); break;
                                 case 0:rmatrix.makeRotationZ(RAPT.PI90); break;
                                 case 3:rmatrix.makeRotationZ(RAPT.PI);  break;
@@ -276,7 +277,7 @@ RAPT.World3D.prototype = {
                             tmpGeometry.merge(RAPT.GEO.floor, matrix);
 
                         } else{
-                            switch(type){
+                            switch(etype){
                                 case 7:rmatrix.makeRotationZ(RAPT.PI90); break;
                                 case 5:rmatrix.makeRotationZ(-RAPT.PI90); break;
                                 case 6:rmatrix.makeRotationZ(RAPT.PI); break;

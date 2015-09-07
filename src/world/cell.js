@@ -13,6 +13,7 @@ RAPT.Cell = function (x, y, type) {
 	this.edges = [];
 	this.ne = 0;
 }
+
 RAPT.Cell.prototype = {
 	constructor: RAPT.Cell,
 	bottomLeft : function() { return new RAPT.Vector(this.x, this.y); },
@@ -56,7 +57,9 @@ RAPT.Cell.prototype = {
 	// returns all edges that block this color
 	getBlockingEdges : function(color) {
 		var blockingEdges = [];
-		for(var i = 0; i < this.edges.length; i++) {
+		var i = this.edges.length;
+		while(i--){
+		//for(var i = 0; i < this.edges.length; i++) {
 			if(this.edges[i].blocksColor(color)) {
 				blockingEdges.push(this.edges[i]);
 			}
@@ -65,10 +68,10 @@ RAPT.Cell.prototype = {
 	},
 
 	getEdge : function(edge) {
-		for (var i = 0; i < this.edges.length; ++i) {
+		var i = this.edges.length;
+		while(i--){
 			var thisEdge = this.edges[i];
-			if ((thisEdge.getStart().sub(edge.getStart())).lengthSquared() < 0.001 &&
-			   (thisEdge.getEnd().sub(edge.getEnd())).lengthSquared() < 0.001) {
+			if ((thisEdge.getStart().sub(edge.getStart())).lengthSquared() < 0.001 && (thisEdge.getEnd().sub(edge.getEnd())).lengthSquared() < 0.001) {
 				return i;
 			}
 		}
@@ -90,43 +93,5 @@ RAPT.Cell.prototype = {
 			case RAPT.CELL_CEIL_DIAG_RIGHT: return new RAPT.Polygon(vxy, v01, v10, v11);
 		}
 		return null;
-	},
-	draw : function(c) {
-		var x = this.x, y = this.y;
-		c.beginPath();
-		if(this.type == RAPT.CELL_SOLID){
-			c.moveTo(x, y);
-			c.lineTo(x, y + 1);
-			c.lineTo(x + 1, y + 1);
-			c.lineTo(x + 1, y);
-		}
-		else if(this.type == RAPT.CELL_FLOOR_DIAG_LEFT){
-			c.moveTo(x, y);
-			c.lineTo(x + 1, y);
-			c.lineTo(x, y + 1);
-		}
-		else if(this.type == RAPT.CELL_FLOOR_DIAG_RIGHT){
-			c.moveTo(x, y);
-			c.lineTo(x + 1, y + 1);
-			c.lineTo(x + 1, y);
-		}
-		else if(this.type == RAPT.CELL_CEIL_DIAG_LEFT){
-			c.moveTo(x, y);
-			c.lineTo(x, y + 1);
-			c.lineTo(x + 1, y + 1);
-		}
-		else if(this.type == RAPT.CELL_CEIL_DIAG_RIGHT){
-			c.moveTo(x + 1, y);
-			c.lineTo(x, y + 1);
-			c.lineTo(x + 1, y + 1);
-		}
-		c.closePath()
-		c.fill();
-		c.stroke();
-	},
-	drawEdges : function(c) {
-		for(var i = 0; i < this.edges.length; i++) {
-			this.edges[i].draw(c);
-		}
 	}
 }

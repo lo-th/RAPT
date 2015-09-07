@@ -313,8 +313,6 @@ RAPT.GameState.prototype = {
 		while(x--){
 			y = h;
 			while(y--){
-		//for (var x = 0; x < json['width']; x++) {
-		//	for (var y = 0; y < json['height']; y++) {
 				var type = json['cells'][y][x];
 				this.world.setCell(x, y, type);
 
@@ -330,8 +328,6 @@ RAPT.GameState.prototype = {
 		// create 3d level
 		//this.w3d.initLevel(this.world);
 		RAPT.W3D.initLevel(this.world);
-		//RAPT.W3D.addSprite(start.x, start.y, -1, 2, 2);
-		//RAPT.W3D.addSprite(end.x, end.y, -1, 1, 1);
 
 		// Reset players
 		this.playerA.reset(this.world.spawnPoint, RAPT.EDGE_RED);

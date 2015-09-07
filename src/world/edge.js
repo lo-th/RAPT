@@ -16,10 +16,6 @@ RAPT.Edge = function (start, end, color, type) {
 	this.segment = new RAPT.Segment(start, end);
 	this.color = color;
 	this.type = type || 0;
-
-	// for full 3d
-	this.rtype = 0;
-	this.r = 0;
 }
 RAPT.Edge.prototype = {
 	constructor: RAPT.Edge,
@@ -41,26 +37,6 @@ RAPT.Edge.prototype = {
 	},
 	getOrientation : function() {
 		return RAPT.getOrientation(this.segment.normal);
-	},
-	draw : function(c) {
-		switch(this.color) {
-			case RAPT.EDGE_NEUTRAL: c.strokeStyle = 'black'; break;
-			case RAPT.EDGE_RED: c.strokeStyle = '#C00000'; break;
-			case RAPT.EDGE_BLUE: c.strokeStyle = '#0000D2'; break;
-		}
-		this.segment.draw(c);
-
-		var xOffset = this.segment.normal.x * 0.1;
-		var yOffset = this.segment.normal.y * 0.1;
-
-		c.beginPath();
-		for(var i = 1, num = 10; i < num - 1; ++i) {
-			var fraction = i / (num - 1);
-			var start = this.segment.start.mul(fraction).add(this.segment.end.mul(1 - fraction));
-			c.moveTo(start.x, start.y);
-			c.lineTo(start.x - xOffset, start.y - yOffset);
-		}
-		c.stroke();
 	}
 }
 

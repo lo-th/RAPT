@@ -35,7 +35,7 @@ RAPT.World.prototype = {
 		return (x >= 0 && y >= 0 && x < this.width && y < this.height) ? this.cells[x][y].ne : 0;
 	},
 	setCellNE : function(x, y, v) {
-		c = this.getCell(x,y)
+		c = this.getCell(x,y);
 		if(c!==null)c.ne = v;
 	},
 	// cells outside the world return null
@@ -45,6 +45,9 @@ RAPT.World.prototype = {
 	// cells outside the world return solid
 	getCellType : function(x, y) {
 		return (x >= 0 && y >= 0 && x < this.width && y < this.height) ? this.cells[x][y].type : RAPT.CELL_SOLID;
+	},
+	getEdges : function(x, y) {
+		return (x >= 0 && y >= 0 && x < this.width && y < this.height) ? this.cells[x][y].edges : [];
 	},
 	setCell : function(x, y, type) {
 		this.cells[x][y] = new RAPT.Cell(x, y, type);
