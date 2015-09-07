@@ -12,11 +12,11 @@
     w.perfNow = perfNow;
 })(window);
 
-if (!Date.now) {
+/*if (!Date.now) {
   Date.now = function now() {
     return new Date().getTime();
   };
-}
+}*/
 
 
 var RAPT = RAPT || {};
@@ -41,7 +41,7 @@ var GAME_LOSS_TEXT = "You lost.  Hit SPACE to restart, or ESC to select a new le
 var TEXT_BOX_X_MARGIN = 6;
 var TEXT_BOX_Y_MARGIN = 6;
 var SECONDS_BETWEEN_TICKS = 1 / 60;
-var useFixedPhysicsTick = true;
+var useFixedPhysicsTick = false;
 
 
 RAPT.gameState = null;
@@ -49,13 +49,12 @@ RAPT.gameState = null;
 
 //_____________________________GAME
 
-RAPT.Game = function(w, h, message) {
+RAPT.Game = function(message) {
 
 	RAPT.MESSAGE = message;
 
-    this.w = w;
-    this.h = h;
-
+    this.w = window.innerWidth;
+    this.h = window.innerHeight;
 
 	this.json = null;
 	this.fps = 0;
@@ -83,9 +82,9 @@ RAPT.Game = function(w, h, message) {
 
 RAPT.Game.prototype = {
 	constructor: RAPT.Game,
-	resize : function(w, h) {
-		this.w = w;
-		this.h = h;
+	resize : function() {
+		this.w = window.innerWidth;
+		this.h = window.innerHeight;
 	},
 
     makePause : function(){
@@ -141,6 +140,7 @@ RAPT.Game.prototype = {
 			// variable physics tick
 			RAPT.gameState.tick(seconds);
 			RAPT.Particle.tick(seconds);
+
 			this.update3d();
 		}
 

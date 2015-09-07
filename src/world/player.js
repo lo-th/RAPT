@@ -1,8 +1,8 @@
 RAPT.PAUSE_AFTER_DEATH = 2;
 RAPT.RESPAWN_INTERPOLATION_TIME = 1;
 RAPT.PAUSE_BEFORE_RESPAWN = 0.3;
-RAPT.PLAYER_ACCELERATION = 50
-RAPT.PLAYER_MAX_SPEED = 8;
+RAPT.PLAYER_ACCELERATION = 70;//50;
+RAPT.PLAYER_MAX_SPEED = 8;//8;
 RAPT.PLAYER_WIDTH = 0.2;
 RAPT.PLAYER_HEIGHT = 0.75;
 RAPT.PLAYER_SUPER_JUMP_SPEED = 10;
@@ -96,8 +96,8 @@ RAPT.Player.prototype = {
 	//onDeath : function() {},
 	//onRespawn : function() {},
 	add3d: function(){
-		var uvs = [[0,0], [0,1], [1,0], [1,1], [2, 0], [2,1], [1,0], [1,1], [2, 0], [2,1]];
-		if(this.color==1) var uvs = [[0,2], [0,3], [1,2], [1,3], [2, 2], [2,3], [1,2], [1,3], [2, 2], [2,3]];
+		var uvs = [[0,0], [0,1], [1,0], [1,1], [2, 0], [2,1], [1,0], [1,1], [2, 0], [2,1], [3,2]];
+		if(this.color==1) var uvs = [[0,2], [0,3], [1,2], [1,3], [2, 2], [2,3], [1,2], [1,3], [2, 2], [2,3], [3,2]];
 		this.sprite = new RAPT.SpriteGroup({
 
 			name:'player'+ this.color,
@@ -106,17 +106,19 @@ RAPT.Player.prototype = {
 			size : 0.4,
 			ydecal:0.2,
 			color: this.color==1 ? 0XFF0000 : 0X0000FF,
-			list:  ['head'  , 'torso' , 'uplegl' , 'lowlegl' , 'uparml' , 'lowarml', 'uplegr' , 'lowlegr' , 'uparmr' , 'lowarmr' ],
-			parent:['torso' , ''      , 'torso'  , 'uplegl'  , 'torso'  , 'uparml' , 'torso'  , 'uplegr'  , 'torso'  , 'uparmr' ],
+			list:  ['head'  , 'torso' , 'uplegl' , 'lowlegl' , 'uparml' , 'lowarml', 'uplegr' , 'lowlegr' , 'uparmr' , 'lowarmr', 'sabre' ],
+			parent:['torso' , ''      , 'torso'  , 'uplegl'  , 'torso'  , 'uparml' , 'torso'  , 'uplegr'  , 'torso'  , 'uparmr', 'lowarml' ],
 			nuv:4,
 			uvs :  uvs,
 			pos: [  [0,0.5,0] ,[0,0,0], 
-			        [-0.02,-0.26,1]  , [0,-0.5,1]   , [-0.05, 0.4, 2]   , [0,-0.5, 2],
-			        [0.05,-0.25, -1] , [0,-0.5, -1] , [-0.05, 0.4, -2]  , [0,-0.5, -2]   
+			        [-0.02,-0.26,1]  , [0,-0.5,1]   , [-0.05, 0.4, 2]   , [0,-0.4, 2],
+			        [0.05,-0.25, -1] , [0,-0.5, -1] , [-0.05, 0.4, -2]  , [0,-0.4, -2],
+			        [0,-0.5, -1]  
 			    ],
 			center:[ [0,0.25]  ,[0,0],
 			         [0,-0.25] , [0,-0.25]  , [0,-0.25] , [0,-0.25], 
-			         [0,-0.25]  , [0,-0.25]  , [0,-0.25] , [0,-0.25]     
+			         [0,-0.25]  , [0,-0.25]  , [0,-0.25] , [0,-0.25],
+			         [0.25,0]    
 			    ]
 		});
 	},
@@ -271,8 +273,7 @@ RAPT.Player.prototype = {
 		var onRight = (RAPT.gameState.edgeQuad.edges[RAPT.EDGE_RIGHT] != null) || (this.lastContact != null && RAPT.getOrientation(this.lastContact.normal) == RAPT.EDGE_RIGHT);
 		var onCeiling = (RAPT.gameState.edgeQuad.edges[RAPT.EDGE_CEILING] != null) || (this.lastContact != null && RAPT.getOrientation(this.lastContact.normal) == RAPT.EDGE_CEILING);
 
-		if (!this.jumpDisabled && this.jumpKey)
-		{
+		if (!this.jumpDisabled && this.jumpKey){
 			// do a vertical jump
 			if(onGround){
 				this.velocity.y = 6.5;
@@ -532,7 +533,7 @@ RAPT.Player.prototype = {
 		if(this.sprite == null) return;
 
 		// update 3d sprite rotation
-		var i = this.sprite.length;
+		var i = this.sprite.length-1;
 		while(i--){
 			this.sprite.sprite[i].rotation.z = (frame.angles[i] * slowDownScale);
 		}

@@ -1,4 +1,4 @@
-RAPT.HELP_SIGN_TEXT_WIDTH = 1.5;
+//RAPT.HELP_SIGN_TEXT_WIDTH = 1.5;
 RAPT.HELP_SIGN_WIDTH = 0.76;
 RAPT.HELP_SIGN_HEIGHT = 0.76;
 
@@ -23,11 +23,11 @@ RAPT.HelpSign = function (center, text, width) {
 	this.text = text;
 	this.drawText = false;
 	this.timeSinceStart = 0;
-	if (width === undefined) {
+	/*if (width === undefined) {
 		this.textWidth = RAPT.HELP_SIGN_TEXT_WIDTH;
 	} else {
 		this.textWidth = width;
-	}
+	}*/
 
 	this.isWasSeen = false;
 };

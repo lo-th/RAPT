@@ -288,15 +288,5 @@ RAPT.Particle = (function() {
 		geometry.attributes.size.needsUpdate = true;
 	}
 
-	RAPT.Particle.draw = function(c) {
-		/*for(var i = 0; i < count; i++) {
-			var particle = particles[i];
-			var pos = particle.m_position;
-			if (pos.x >= RAPT.drawMinX && pos.y >= RAPT.drawMinY && pos.x <= RAPT.drawMaxX && pos.y <= RAPT.drawMaxY) {
-				particle.draw(c);
-			}
-		}*/
-	};
-
 	return RAPT.Particle;
 })();
