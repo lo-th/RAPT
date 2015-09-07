@@ -80,6 +80,7 @@ canvas { position: absolute; top:0; left:0; pointer-events:auto; width:100%; hei
 <script type="text/javascript">
 
 var fps = 1e3/60, game, w3d, current = 0, isApart = true;
+var interval = null;
 
 window.onload = loadAsset;
 
@@ -96,7 +97,7 @@ function initGame() {
     game.load(RAPT.LEVELS[current]);
 
     if(isApart){
-        setInterval(tick, fps);
+        interval = setInterval(tick, fps);
         animateOnly();
     } else {
         animate();
@@ -147,11 +148,40 @@ function animateOnly() {
 // ----------------------------
 
 function animate() {
-    //game.tick();
-    game.update();
+    game.tick();
+    //game.update();
     w3d.render();
     requestAnimationFrame( animate );
 };
+
+
+var hidden, vchange;
+if (typeof document.hidden !== "undefined") {
+    hidden = "hidden";
+    vchange = "visibilitychange";
+    //visibilityState = "visibilityState";
+} else if (typeof document.mozHidden !== "undefined") {
+    hidden = "mozHidden";
+    vchange = "mozvisibilitychange";
+    //visibilityState = "mozVisibilityState";
+} else if (typeof document.msHidden !== "undefined") {
+    hidden = "msHidden";
+    vchange = "msvisibilitychange";
+    //visibilityState = "msVisibilityState";
+} else if (typeof document.webkitHidden !== "undefined") {
+    hidden = "webkitHidden";
+    vchange = "webkitvisibilitychange";
+    //visibilityState = "webkitVisibilityState";
+}
+
+document.addEventListener(vchange, gamepause, false);
+
+function gamepause() {
+    if(document[hidden]) game.makePause();
+    else game.stopPause();
+  //log.innerHTML += 'Le document est caché ? '+document[hidden]+'<br>';
+  //log.innerHTML += 'Etat : '+document[visibilityState]+'<br>';
+}
 
 </script>
 </body>

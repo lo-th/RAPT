@@ -5,6 +5,7 @@ RAPT.SPAWN_POINT_PARTICLE_FREQ = 0.3;
 RAPT.GAME_IN_PLAY = 0;
 RAPT.GAME_WON = 1;
 RAPT.GAME_LOST = 2;
+RAPT.GAME_PAUSE = 3;
 
 // enum StatIndex
 RAPT.STAT_PLAYER_DEATHS = 0;
@@ -269,11 +270,16 @@ RAPT.GameState.prototype = {
 
     //---------------------------------------- LOADER
     reset:function(){
+
+    	RAPT.Particle.reset();
+
     	this.spawnPointParticleTimer = 0;
+    	this.timeSinceStart = 0;
+
 		this.spawnPointOffset = new RAPT.Vector();
 		this.enemies = [];
 		this.doors = [];
-		this.timeSinceStart = 0;
+		
 
 		// keys (will be set automatically)
 		this.killKey = false;

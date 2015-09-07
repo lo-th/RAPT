@@ -529,6 +529,8 @@ RAPT.Player.prototype = {
 			if(slowDownScale > 1) slowDownScale = 1;
 		}
 
+		if(this.sprite == null) return;
+
 		// update 3d sprite rotation
 		var i = this.sprite.length;
 		while(i--){

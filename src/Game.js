@@ -45,7 +45,7 @@ var useFixedPhysicsTick = true;
 
 
 RAPT.gameState = null;
-RAPT.game = null;
+//RAPT.game = null;
 
 //_____________________________GAME
 
@@ -55,11 +55,9 @@ RAPT.Game = function(w, h, message) {
 
     this.w = w;
     this.h = h;
-    //this.width2 = w / RAPT.gameScale;
-	//this.height2 = h / RAPT.gameScale;
+
 
 	this.json = null;
-	//this.camera = new RAPT.Camera();
 	this.fps = 0;
 	this.fixedPhysicsTick = 0;
 
@@ -73,6 +71,8 @@ RAPT.Game = function(w, h, message) {
 
     this.timerStep = 1000/60;
     this.lastTime = 0;
+
+    this.pause = false;
 	
 	// whether this game is the last level in the menu, this will be updated by main.js when the menu loads
 	//this.lastLevel = false;
@@ -86,59 +86,33 @@ RAPT.Game.prototype = {
 	resize : function(w, h) {
 		this.w = w;
 		this.h = h;
-		//this.width2 = w / RAPT.gameScale;
-		//this.height2 = h / RAPT.gameScale;
 	},
-	/*upGameScale:function(){
-		this.width2 = this.width / RAPT.gameScale;
-		this.height2 = this.height / RAPT.gameScale;
-	},*/
-	update:function(){
 
-
-        //this.timeNow = this.now();//
-        this.timeNow = window.perfNow();
-        this.delta = this.timeNow - this.then;
-        //this.skip ++;
-
-        if (this.delta > this.timerStep) {
-            //console.time("start update loop")
-
-            //this.then = this.timeNow - (this.delta % this.timerStep);
-
-            //if(this.inPlay) this.frame ++;
-
-            //var neo = this.neo;
-            //var name = this.neoname;
-            //var data = this.data;
-            //var i = this.neo.length;
-            //while(i--) this.data[this.neo[i].name] = this.neo[i].update(this.frame);
-            //while(i--) { k = neo[i]; data[k.name] = k.update(this.frame); }
-
-            //while(i--) this.data[this.neoname[i]] = this.neo[i].update(this.frame);
-
-            //this.updateTime();
-            //this.autoScroll();
-            var sec = this.delta/1000;
-
-            RAPT.gameState.tick(sec);
-			RAPT.Particle.tick(sec);
-			RAPT.game.draw3d();
-
-            this.then = this.timeNow - (this.delta % this.timerStep);
-
-            /*if(this.frame >= this.nframe){ 
-                if(this.isLoop) this.moveTo(0);
-                else this.stop();
-            }*/
-
-           // console.timeEnd("start update loop")
-        }
+    makePause : function(){
+        this.pause = true;
+    },
+    stopPause:function(){
+        this.pause = false;
+        this.lastTime = window.perfNow();
     },
 	tick : function() {
+        if(this.pause) return;
+
 		var currentTime = window.perfNow();//Date.now();//new Date();
-        var seconds = (currentTime - this.lastTime) / 1000;
+        var seconds = (currentTime - this.lastTime) * 0.001;
         this.lastTime = currentTime;
+
+
+
+
+       // this.delta = currentTime - this.then;
+        //var seconds = (currentTime - (this.lastTime % this.timerStep)) * 0.001;
+       // var seconds = this.delta* 0.001; //(currentTime - this.lastTime) * 0.001;
+       // this.lastTime = currentTime;
+
+        //this.then = this.timeNow - (this.delta % this.timerStep);
+
+        //RAPT.W3D.tell(currentTime);
 
 		// when the screen isn't split, standing at the original spawn point:
 		// * Triple Threat
@@ -161,18 +135,19 @@ RAPT.Game.prototype = {
 				this.fixedPhysicsTick -= SECONDS_BETWEEN_TICKS;
 				RAPT.gameState.tick(SECONDS_BETWEEN_TICKS);
 				RAPT.Particle.tick(SECONDS_BETWEEN_TICKS);
-				this.draw3d();
+				this.update3d();
 			}
 		} else {
 			// variable physics tick
 			RAPT.gameState.tick(seconds);
 			RAPT.Particle.tick(seconds);
-			this.draw3d();
+			this.update3d();
 		}
 
 
 		// smooth the fps a bit
-		this.fps = RAPT.lerp(this.fps, 1 / seconds, 0.05);
+		//this.fps = RAPT.lerp(this.fps, 1 / seconds, 0.05);
+        //RAPT.W3D.tell(this.fps);
 		
 		// handle winning the game
 		if (!this.isDone && RAPT.gameState.gameStatus != RAPT.GAME_IN_PLAY) {
@@ -186,7 +161,7 @@ RAPT.Game.prototype = {
 		RAPT.MESSAGE.innerHTML = s;
 	},
 
-	draw3d : function(){
+	update3d : function(){
 		var mid = this.width2*0.25;
 		var positionA = RAPT.gameState.playerA.getCenter();
 		var positionB = RAPT.gameState.playerB.getCenter();
@@ -222,27 +197,18 @@ RAPT.Game.prototype = {
 			if(centerB.lengthSquared() > maxLength*maxLength) centerB = centerB.unit().mul(maxLength);
 			centerB = centerB.add(positionB);
 
-			//if(centerA.y<=centerB.y){
-				//this.w3d.upCamera(centerB.x, centerB.y, 2);
-				//this.w3d.upCamera(centerA.x, centerA.y, 1);
-				RAPT.W3D.upCamera(center.x, center.y, 0);
-				RAPT.W3D.upCamera(centerA.x, centerA.y, 1);
-				RAPT.W3D.upCamera(centerB.x, centerB.y, 2);
-			//} else {
-			//	this.w3d.upCamera(centerB.x, centerB.y, 1);
-			//	this.w3d.upCadzmera(centerA.x, centerA.y, 2);
-			//}
+			RAPT.W3D.upCamera(centerA.x, centerA.y, 1);
+			RAPT.W3D.upCamera(centerB.x, centerB.y, 2);
 
 			var splitSize = Math.min(0.1, (positionB.sub(positionA).length() - 1.9 * maxLength) * 0.01);
 			//var angle = Math.atan( (split.y + split.y) / (split.x + split.x ) ) - (Math.PI*0.5)
-			var angle = Math.atan2( (split.y + split.y) , (split.x + split.x ) ) - (Math.PI*0.5)
+			var angle = Math.atan2( (split.y + split.y) , (split.x + split.x ) ) - (Math.PI*0.5);
 			//this.w3d.effect.setAngle(-angle);
 			//this.w3d.effect.setFuzzy(splitSize);
 
 			RAPT.W3D.effect.setAngle(-angle);
 			RAPT.W3D.effect.setFuzzy(splitSize);
 		}
-		//RAPT.W3D.tell(this.fps.toFixed(0));
 
 
 		if (RAPT.gameState.gameStatus === RAPT.GAME_WON) {
@@ -268,7 +234,7 @@ RAPT.Game.prototype = {
         xhr.send();
     },
     restart : function() {
-        RAPT.Particle.reset();
+        
         RAPT.gameState.loadLevelFromJSON(this.json);
     },
 	keyDown : function(e) {
