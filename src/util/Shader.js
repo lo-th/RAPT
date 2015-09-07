@@ -38,3 +38,40 @@ RAPT.decalUV = [
     '    return (uv);',
     '}',
 ].join("\n");
+
+RAPT.MakeBasicShader = function(obj){
+    return {
+        uniforms:{
+        'map' : { type: 't', value: obj.map || null },
+        'color' : { type:'c', value: new THREE.Color(obj.color || 0xFFFFFF) },
+        'alphaTest' : { type:'f', value: obj.alphaTest || 0 }
+        },
+        fragmentShader:[
+        'uniform sampler2D map;',
+        'uniform vec3 color;',
+        'uniform float alphaTest;',
+        'varying vec2 vUv;',
+        'void main(){',
+        '    vec4 diffuseColor = vec4(color, 1.0);',
+        '    vec4 texelColor = texture2D(map, vUv);',
+        '    diffuseColor *= texelColor;',
+        '    gl_FragColor = diffuseColor;',
+        '    if ( gl_FragColor.a < alphaTest ) discard;',
+        '}'
+        ].join('\n'),
+        vertexShader:[
+        'varying vec2 vUv;',
+        'void main(){',
+        '    vUv = uv;',
+        '    gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0);',
+        '}'
+        ].join('\n'),
+        side: obj.side || THREE.FrontSide,
+        transparent: obj.transparent || false,
+        //alphaTest:obj.alphaTest || 0,
+        shading: THREE.FlatShading,
+        lights:false,
+        fog:false
+
+    }
+}

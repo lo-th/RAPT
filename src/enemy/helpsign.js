@@ -53,7 +53,7 @@ RAPT.HelpSign.prototype.tick = function(seconds) {
 	RAPT.Enemy.prototype.tick.call(this, seconds);
 
 	if(this.drawText){
-		RAPT.game.message(this.text);
+		RAPT.gameState.message(this.text);
 	}
 };
 

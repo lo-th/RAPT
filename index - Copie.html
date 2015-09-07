@@ -20,7 +20,10 @@ canvas { position: absolute; top:0; left:0; pointer-events:auto; width:100%; hei
 <script src="js/sea3d/SEA3DLoader.js"></script>
 
 <!-- game root -->
-<script src="src/Game.js"></script>
+<script src="src/game/game.js"></script>
+<script src="src/game/level.js"></script>
+<script src="src/game/keys.js"></script>
+<script src="src/game/playerstats.js"></script>
 
 <!-- utils -->
 <script src="src/util/Math.js"></script>
@@ -38,6 +41,7 @@ canvas { position: absolute; top:0; left:0; pointer-events:auto; width:100%; hei
 <script src="src/world/world.js"></script>
 <script src="src/world/enemy.js"></script>
 <script src="src/world/player.js"></script>
+
 <script src="src/world/World3d.js"></script>
 
 <!-- enemy -->
@@ -79,7 +83,7 @@ canvas { position: absolute; top:0; left:0; pointer-events:auto; width:100%; hei
 
 <script type="text/javascript">
 
-var fps = 1e3/60, game, w3d, current = 0, isApart = true;
+var fps = 1e3/60, level, w3d, current = 0, isApart = true;
 
 window.onload = loadAsset;
 
@@ -90,10 +94,10 @@ function loadAsset() {
 function initGame() {
 
     w3d = new RAPT.World3D( document.getElementById( 'canvas' ));
-    game = new RAPT.Game( window.innerWidth, window.innerHeight, document.getElementById( 'message' ));
+    level = new RAPT.Level( window.innerWidth, window.innerHeight, document.getElementById( 'message' ));
 
     initList();
-    game.load(RAPT.LEVELS[current]);
+    level.load(RAPT.LEVELS[current]);
 
     if(isApart){
         setInterval(tick, fps);
@@ -106,7 +110,7 @@ function initGame() {
 function playNext(){
     current++;
     if(current == RAPT.LEVELS.length) current = 0;
-    game.load(RAPT.LEVELS[current]);
+    level.load(RAPT.LEVELS[current]);
 };
 
 function initList(){
@@ -117,7 +121,7 @@ function initList(){
         b.style.cssText = bStyle;
         b.name = i;
         b.innerHTML = i;//b.name;
-        b.addEventListener('click',  function ( e ) {  game.load( RAPT.LEVELS[this.name] );  e.preventDefault();}, false);
+        b.addEventListener('click',  function ( e ) {  level.load( RAPT.LEVELS[this.name] );  e.preventDefault();}, false);
         b.addEventListener('mouseover',  function ( e ) {  this.style.background= '#FF8800'; document.getElementById( 'message' ).innerHTML = RAPT.LEVELS[this.name]; }, false);
         b.addEventListener('mouseout',  function ( e ) {  this.style.background= '#666';}, false);
         list.appendChild( b );
@@ -126,18 +130,18 @@ function initList(){
 
 window.onresize = function(e) {
     var w = window.innerWidth;
-    var h = window.innerHeight;
+    var h =  window.innerHeight;
     w3d.resize();
-    game.resize(w,h);
+    level.resize(w,h);
 };
 
-document.onkeydown = function(e) {  e = e || window.event; game.keyDown(e); };
-document.onkeyup = function(e) { e = e || window.event; game.keyUp(e); };
+document.onkeydown = function(e) {  e = e || window.event; level.keyDown(e); };
+document.onkeyup = function(e) { e = e || window.event; level.keyUp(e); };
 
 // -----------------------------
 
 function tick() {
-    game.tick();
+    level.tick();
 };
 function animateOnly() {
     w3d.render();
@@ -147,8 +151,8 @@ function animateOnly() {
 // ----------------------------
 
 function animate() {
-    //game.tick();
-    game.update();
+    //level.tick();
+    if(RAPT.game!==null) RAPT.game.update();
     w3d.render();
     requestAnimationFrame( animate );
 };

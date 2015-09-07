@@ -1,27 +1,35 @@
 RAPT.WORLD_MARGIN = 60;
 
 RAPT.World = function (w, h, spawnPoint, goal) {
-	this.cells = new Array(w);
-	for (var x = 0; x < w; ++x) {
-		this.cells[x] = new Array(h);
-		for (var y = 0; y < h; ++y) {
-			this.cells[x][y] = new RAPT.Cell(x, y, RAPT.CELL_SOLID);
-		}
-	}
-	
-	this.width = w;
-	this.height = h;
-	this.safety = spawnPoint;
+	this.cells = null;
+	this.width = 0;
+	this.height = 0;
 	this.totalEdge = 0;
 
-	this.spawnPoint = spawnPoint.add(new RAPT.Vector(0.5, 0.5));
-	this.goal = goal.add(new RAPT.Vector(0.5, 0.5));
-
-	this.edges3d = [];
+	this.safety = new RAPT.Vector();
+	this.spawnPoint = new RAPT.Vector();
+	this.goal = new RAPT.Vector();
 }
 
 RAPT.World.prototype = {
 	constructor: RAPT.World,
+	init:function(w, h, spawnPoint, goal){
+		this.cells = new Array(w);
+		for (var x = 0; x < w; ++x) {
+			this.cells[x] = new Array(h);
+			for (var y = 0; y < h; ++y) {
+				this.cells[x][y] = new RAPT.Cell(x, y, RAPT.CELL_SOLID);
+			}
+		}
+		
+		this.width = w;
+		this.height = h;
+		this.safety = spawnPoint;
+		this.totalEdge = 0;
+
+		this.spawnPoint = spawnPoint.add(new RAPT.Vector(0.5, 0.5));
+		this.goal = goal.add(new RAPT.Vector(0.5, 0.5));
+	},
 	
 	getCellNE:function(x, y){
 		return (x >= 0 && y >= 0 && x < this.width && y < this.height) ? this.cells[x][y].ne : 0;
@@ -42,12 +50,11 @@ RAPT.World.prototype = {
 		this.cells[x][y] = new RAPT.Cell(x, y, type);
 	},
 	createAllEdges : function() {
-		this.edges3d = [];
+		//this.edges3d = [];
 		this.totalEdge = 0;
 		for (var x = 0; x < this.cells.length; x++) {
 			for (var y = 0; y < this.cells[0].length; y++) {
 				this.cells[x][y].edges = this.createEdges(x, y);
-				//this.findType(this.cells[x][y].edges);
 				this.totalEdge+=this.cells[x][y].edges.length;
 			}
 		}

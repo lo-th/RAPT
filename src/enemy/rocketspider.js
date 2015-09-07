@@ -1,22 +1,3 @@
-//RAPT.SPIDER_LEG_HEIGHT = 0.5;
-
-/*RAPT.SPIDER_BODY = 0;
-RAPT.SPIDER_LEG1_TOP = 1;
-RAPT.SPIDER_LEG2_TOP = 2;
-RAPT.SPIDER_LEG3_TOP = 3;
-RAPT.SPIDER_LEG4_TOP = 4;
-RAPT.SPIDER_LEG5_TOP = 5;
-RAPT.SPIDER_LEG6_TOP = 6;
-RAPT.SPIDER_LEG7_TOP = 7;
-RAPT.SPIDER_LEG8_TOP = 8;
-RAPT.SPIDER_LEG1_BOTTOM = 9;
-RAPT.SPIDER_LEG2_BOTTOM = 10;
-RAPT.SPIDER_LEG3_BOTTOM = 11;
-RAPT.SPIDER_LEG4_BOTTOM = 12;
-RAPT.SPIDER_LEG5_BOTTOM = 13;
-RAPT.SPIDER_LEG6_BOTTOM = 14;
-RAPT.SPIDER_LEG7_BOTTOM = 15;
-RAPT.SPIDER_LEG8_BOTTOM = 16;*/
 RAPT.SPIDER_NUM_SPRITES = 17;
 
 RAPT.spiderWalkingKeyframes = [
@@ -40,64 +21,7 @@ RAPT.SPIDER_FLOOR_DIST = 1.0;
 // Spiders can only see this many cells high
 RAPT.SPIDER_SIGHT_HEIGHT = 10;
 
-/*RAPT.drawSpiderBody = function (c) {
-	var innerRadius = 0.5;
-	c.beginPath();
-	for(var i = 0; i <= 21; i++)
-	{
-		var angle = (0.25 + 0.5 * i / 21) * Math.PI;
-		var radius = 0.6 + 0.05 * (i & 2);
-		c.lineTo(Math.cos(angle) * radius, Math.sin(angle) * radius - 0.5);
-	}
-	for(var i = 21; i >= 0; i--)
-	{
-		var angle = (0.25 + 0.5 * i / 21) * Math.PI;
-		c.lineTo(Math.cos(angle) * innerRadius, Math.sin(angle) * innerRadius - 0.5);
-	}
-	c.fill();
-}
-
-RAPT.drawSpiderLeg = function (c) {
-	c.beginPath();
-	c.moveTo(0, 0);
-	c.lineTo(0, -RAPT.SPIDER_LEG_HEIGHT);
-	c.stroke();
-}
-
-RAPT.createSpiderSprites = function () {
-	var sprites = [];
-	for(var i = 0; i < RAPT.SPIDER_NUM_SPRITES; i++) {
-		sprites.push(new RAPT.Sprite());
-		sprites[i].drawGeometry = (i == 0) ? RAPT.drawSpiderBody : RAPT.drawSpiderLeg;
-	}
-
-	for(var i = RAPT.SPIDER_LEG1_TOP; i <= RAPT.SPIDER_LEG8_TOP; i++) {
-		sprites[i].setParent(sprites[RAPT.SPIDER_BODY]);
-	}
-
-	for(var i = RAPT.SPIDER_LEG1_BOTTOM; i <= RAPT.SPIDER_LEG8_BOTTOM; i++) {
-		sprites[i].setParent(sprites[i - RAPT.SPIDER_LEG1_BOTTOM + RAPT.SPIDER_LEG1_TOP]);
-	}
-
-	sprites[RAPT.SPIDER_LEG1_TOP].offsetBeforeRotation = new RAPT.Vector(RAPT.SPIDER_WIDTH * 0.35, 0);
-	sprites[RAPT.SPIDER_LEG2_TOP].offsetBeforeRotation = new RAPT.Vector(RAPT.SPIDER_WIDTH * 0.15, 0);
-	sprites[RAPT.SPIDER_LEG3_TOP].offsetBeforeRotation = new RAPT.Vector(RAPT.SPIDER_WIDTH * -0.05, 0);
-	sprites[RAPT.SPIDER_LEG4_TOP].offsetBeforeRotation = new RAPT.Vector(RAPT.SPIDER_WIDTH * -0.25, 0);
-
-	sprites[RAPT.SPIDER_LEG5_TOP].offsetBeforeRotation = new RAPT.Vector(RAPT.SPIDER_WIDTH * 0.25, 0);
-	sprites[RAPT.SPIDER_LEG6_TOP].offsetBeforeRotation = new RAPT.Vector(RAPT.SPIDER_WIDTH * 0.05, 0);
-	sprites[RAPT.SPIDER_LEG7_TOP].offsetBeforeRotation = new RAPT.Vector(RAPT.SPIDER_WIDTH * -0.15, 0);
-	sprites[RAPT.SPIDER_LEG8_TOP].offsetBeforeRotation = new RAPT.Vector(RAPT.SPIDER_WIDTH * -0.35, 0);
-
-	for(var i = RAPT.SPIDER_LEG1_BOTTOM; i <= RAPT.SPIDER_LEG8_BOTTOM; i++)
-		sprites[i].offsetBeforeRotation = new RAPT.Vector(0, -RAPT.SPIDER_LEG_HEIGHT);
-
-	return sprites;
-}*/
-
 RAPT.RocketSpider = function (center, angle) {
-	//SpawningEnemy.prototype.constructor.call(this, ENEMY_ROCKET_SPIDER, center.add(new Vector(0, 0.81 - SPIDER_LEGS_RADIUS + SPIDER_HEIGHT * 0.5)),
-					//  SPIDER_WIDTH, SPIDER_HEIGHT, SPIDER_ELASTICITY, SPIDER_SHOOT_FREQ, 0);
 	RAPT.SpawningEnemy.call(this, RAPT.ENEMY_ROCKET_SPIDER, center.add(new RAPT.Vector(0, 0.81 - RAPT.SPIDER_LEGS_RADIUS + RAPT.SPIDER_HEIGHT * 0.5)),
 					  RAPT.SPIDER_WIDTH, RAPT.SPIDER_HEIGHT, RAPT.SPIDER_ELASTICITY, RAPT.SPIDER_SHOOT_FREQ, 0);
 	this.leftChasesA = true;
@@ -242,10 +166,4 @@ RAPT.RocketSpider.prototype.onDeath = function() {
 
 	// TODO explode real sprite
 	this.sprite.remove();
-}
-
-RAPT.RocketSpider.prototype.draw = function(c) {
-	//c.strokeStyle = 'black';
-	//c.fillStyle = 'black';
-	//this.sprites[RAPT.SPIDER_BODY].draw(c);
 }

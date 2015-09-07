@@ -1,3 +1,7 @@
+RAPT.SHAPE_CIRCLE = 0;
+RAPT.SHAPE_AABB = 1;
+RAPT.SHAPE_POLYGON = 2;
+
 RAPT.MAX_VELOCITY = 30;
 RAPT.MAX_COLLISIONS = 20;
 // if the collision detection system fails, what elasticity should we use?
@@ -23,8 +27,7 @@ RAPT.CollisionDetector.prototype = {
 	},
 	collideShapeWorld : function(shape, ref_deltaPosition, ref_velocity, elasticity, world, color, emergency) {
 		// only chuck norris may divide by zero
-		if(ref_deltaPosition.ref.lengthSquared() < 0.000000000001)
-		{
+		if(ref_deltaPosition.ref.lengthSquared() < 0.000000000001){
 			ref_deltaPosition.ref = new RAPT.Vector(0, 0);
 			return null;
 		}
@@ -54,8 +57,7 @@ RAPT.CollisionDetector.prototype = {
 			var newContact = null;
 
 			// see if this setting for deltaPosition causes a collision
-			for (var it = 0; it < edges.length; it++)
-			{
+			for (var it = 0; it < edges.length; it++){
 				var edge = edges[it];
 				var segmentContact = this.collideShapeSegment(shape, ref_deltaPosition.ref, edge.segment);
 				if(newContact === null || (segmentContact !== null && segmentContact.proportionOfDelta < newContact.proportionOfDelta)) {
@@ -65,8 +67,7 @@ RAPT.CollisionDetector.prototype = {
 
 			// if we didn't hit anything this iteration, return our last hit
 			// on the first iteration, this means return NULL
-			if(newContact === null)
-			{
+			if(newContact === null){
 				this.emergencyCollideShapeWorld(shape, ref_deltaPosition, ref_velocity, world);
 				return lastContact;
 			}
@@ -134,8 +135,7 @@ RAPT.CollisionDetector.prototype = {
 		var ref_edgeProportion = {};  // throwaway
 		var ref_contactPoint = {};	// throwaway
 		var firstEdge = null;
-		for (var it = 0; it < edges.length; it++)
-		{
+		for (var it = 0; it < edges.length; it++){
 			// this is only for edges that face towards the eye
 			if(target.sub(eye).dot(edges[it].segment.normal) >= 0) {
 				continue;
@@ -172,8 +172,7 @@ RAPT.CollisionDetector.prototype = {
 		var edges = world.getEdgesInAabb(boundingBox, entity.getColor());
 
 		var distance = Number.POSITIVE_INFINITY;
-		for (var it = 0; it < edges.length; it++)
-		{
+		for (var it = 0; it < edges.length; it++){
 			var ref_thisShapePoint = {}, ref_thisWorldPoint = {};
 			var thisDistance = this.closestToShapeSegment(shape, ref_thisShapePoint, ref_thisWorldPoint, edges[it].segment);
 			if(thisDistance < distance)
@@ -245,15 +244,11 @@ RAPT.CollisionDetector.prototype = {
 		ref_contactPoint.ref = segStart0.add(segSize0.mul(ref_segmentProportion0.ref));
 
 		// make sure the point of intersection is inside segment0
-		if(ref_segmentProportion0.ref < 0 || ref_segmentProportion0.ref > 1) {
-			return false;
-		}
-
+		if(ref_segmentProportion0.ref < 0 || ref_segmentProportion0.ref > 1) return false;
+		
 		// make sure the point of intersection is inside segment1
-		if(ref_segmentProportion1.ref < 0 || ref_segmentProportion1.ref > 1) {
-			return false;
-		}
-
+		if(ref_segmentProportion1.ref < 0 || ref_segmentProportion1.ref > 1) return false;
+		
 		// now that we've checked all this, the segments do intersect.
 		return true;
 	},
@@ -282,29 +277,19 @@ RAPT.CollisionDetector.prototype = {
 		return true;
 	},
 	intersectShapeSegment : function(shape, segment) {
-		switch(shape.getType())
-		{
-		case RAPT.SHAPE_CIRCLE:
-			return this.intersectCircleSegment(shape, segment);
-
-		case RAPT.SHAPE_AABB:
-			return this.intersectPolygonSegment(shape.getPolygon(), segment);
-
-		case RAPT.SHAPE_POLYGON:
-			return this.intersectPolygonSegment(shape, segment);
+		switch(shape.getType()) {
+    		case RAPT.SHAPE_CIRCLE: return this.intersectCircleSegment(shape, segment);
+    		case RAPT.SHAPE_AABB: return this.intersectPolygonSegment(shape.getPolygon(), segment);
+    		case RAPT.SHAPE_POLYGON: return this.intersectPolygonSegment(shape, segment);
 		}
 
 		alert('assertion failed in CollisionDetector.intersectShapeSegment');
 	},
 	intersectCircleSegment : function(circle, segment) {
 		var ref_lineProportion0 = {}, ref_lineProportion1 = {};
-		if(!this.intersectCircleLine(circle, segment, ref_lineProportion0, ref_lineProportion1)) {
-			return false;
-		}
 
-		if(ref_lineProportion0.ref >= 0 && ref_lineProportion0.ref <= 1) {
-			return true;
-		}
+		if(!this.intersectCircleLine(circle, segment, ref_lineProportion0, ref_lineProportion1)) return false;
+		if(ref_lineProportion0.ref >= 0 && ref_lineProportion0.ref <= 1) return true;
 
 		return (ref_lineProportion1.ref >= 0 && ref_lineProportion1.ref <= 1);
 	},
@@ -330,16 +315,10 @@ RAPT.CollisionDetector.prototype = {
 			return null;
 		}
 
-		switch(shape.getType())
-		{
-		case RAPT.SHAPE_CIRCLE:
-			return this.collideCircleSegment(shape, deltaPosition, segment);
-
-		case RAPT.SHAPE_AABB:
-			return this.collidePolygonSegment(shape.getPolygon(), deltaPosition, segment);
-
-		case RAPT.SHAPE_POLYGON:
-			return this.collidePolygonSegment(shape, deltaPosition, segment);
+		switch(shape.getType()) {
+    		case RAPT.SHAPE_CIRCLE: return this.collideCircleSegment(shape, deltaPosition, segment);
+    		case RAPT.SHAPE_AABB: return this.collidePolygonSegment(shape.getPolygon(), deltaPosition, segment);
+    		case RAPT.SHAPE_POLYGON: return this.collidePolygonSegment(shape, deltaPosition, segment);
 		}
 
 		alert('assertion failed in CollisionDetector.collideShapeSegment');
@@ -398,19 +377,13 @@ RAPT.CollisionDetector.prototype = {
 		// BUGFIX: shock hawks were disappearing on Traps when deltaPosition was very small, which caused
 		// us to try to solve a quadratic with a second order coefficient of zero and put NaNs everywhere
 		var delta = deltaPosition.length();
-		if (delta < 0.0000001) {
-			return false;
-		}
-
+		if (delta < 0.0000001) return false;
+		
 		// if these don't intersect at all, then forget about it.
-		if(!this.intersectCircleLine(circle, new RAPT.Segment(point, point.sub(deltaPosition)), ref_deltaProportion0, ref_deltaProportion1)) {
-			return null;
-		}
+		if(!this.intersectCircleLine(circle, new RAPT.Segment(point, point.sub(deltaPosition)), ref_deltaProportion0, ref_deltaProportion1)) return null;
 
 		// check that this actually happens inside of the segment.
-		if(ref_deltaProportion0.ref < 0 || ref_deltaProportion0.ref > 1) {
-			return null;
-		}
+		if(ref_deltaProportion0.ref < 0 || ref_deltaProportion0.ref > 1) return null;
 
 		// find where the circle will be at the time of the collision
 		var circleCenterWhenCollides = circle.center.add(deltaPosition.mul(ref_deltaProportion0.ref));
@@ -433,14 +406,16 @@ RAPT.CollisionDetector.prototype = {
 		var i;
 
 		// for each side of the polygon, check the edge's endpoints for a collision
-		for(i = 0; i < polygon.vertices.length; i++)
-		{
+        var i = polygon.vertices.length;
+        while(i--){
+		//for(i = 0; i < polygon.vertices.length; i++){
+
 			var edgeEndpoints = [segment.start, segment.end];
 			var edgeMiddle = segment.start.add(segment.end).div(2);
 
 			// for each endpoint of the edge
-			for(var j = 0; j < 2; j++)
-			{
+			for(var j = 0; j < 2; j++){
+
 				var polygonSegment = polygon.getSegment(i);
 				// if the polygon is trying to pass out of the edge, no collision
 				if(polygonSegment.normal.dot(edgeEndpoints[j].sub(edgeMiddle)) > 0) {
@@ -462,8 +437,9 @@ RAPT.CollisionDetector.prototype = {
 		}
 
 		// for each point of the polygon, check for a collision
-		for(i = 0; i < polygon.vertices.length; i++)
-		{
+        i = polygon.vertices.length;
+        while(i--){
+		//for(i = 0; i < polygon.vertices.length; i++){
 	        var vertex = polygon.getVertex(i);
 			// if these don't intersect, ignore this edge
 			if(!this.intersectSegments(segment, new RAPT.Segment(vertex, vertex.add(deltaPosition)), ref_edgeProportion, ref_deltaProportion, ref_contactPoint)) {
@@ -493,26 +469,25 @@ RAPT.CollisionDetector.prototype = {
 		if(newShape.getAabb().getLeft() < 0) { push = true; }
 		if(newShape.getAabb().getRight() > world.width) { push = true; }
 
-		if(!push)
-		{
+		if(!push){
 			var cells = world.getCellsInAabb(newShape.getAabb());
-			for (var it = 0; it < cells.length; it++)
-			{
+            var it = cells.length;
+            while(it--){
+			//for (var it = 0; it < cells.length; it++){
+
 				var cellShape = cells[it].getShape();
 				if(!cellShape) {
 					continue;
 				}
 
-				if(this.overlapShapes(newShape, cellShape))
-				{
+				if(this.overlapShapes(newShape, cellShape)){
 					push = true;
 					break;
 				}
 			}
 		}
 
-		if(push)
-		{
+		if(push){
 			var minX = Math.floor(newShape.getCenter().x) - 3;
 			var maxX = Math.floor(newShape.getCenter().x) + 3;
 			var minY = Math.floor(newShape.getCenter().y) - 3;
@@ -520,10 +495,8 @@ RAPT.CollisionDetector.prototype = {
 
 			// find the closest open square, push toward that
 			var bestSafety = world.safety;
-			for(var x = minX; x <= maxX; x++)
-			{
-				for(var y = minY; y <= maxY; y++)
-				{
+			for(var x = minX; x <= maxX; x++){
+				for(var y = minY; y <= maxY; y++){
 					// if this cell doesn't exist or has a shape in it, not good to push towards.
 					if(!world.getCell(x, y) || world.getCell(x, y).type != RAPT.CELL_EMPTY) {
 						continue;
@@ -552,20 +525,17 @@ RAPT.CollisionDetector.prototype = {
 		var shape1Pointer = shape1.copy();
 
 		// convert aabb's to polygons
-		if(shape0Pointer.getType() == RAPT.SHAPE_AABB)
-		{
+		if(shape0Pointer.getType() == RAPT.SHAPE_AABB){
 			shapeTempPointer = shape0Pointer;
 			shape0Pointer = shape0Pointer.getPolygon();
 		}
-		if(shape1Pointer.getType() == RAPT.SHAPE_AABB)
-		{
+		if(shape1Pointer.getType() == RAPT.SHAPE_AABB){
 			shapeTempPointer = shape1Pointer;
 			shape1Pointer = shape1Pointer.getPolygon();
 		}
 
 		// swap the shapes so that they're in order
-		if(shape0Pointer.getType() > shape1Pointer.getType())
-		{
+		if(shape0Pointer.getType() > shape1Pointer.getType()){
 			shapeTempPointer = shape1Pointer;
 			shape1Pointer = shape0Pointer;
 			shape0Pointer = shapeTempPointer;
@@ -603,44 +573,47 @@ RAPT.CollisionDetector.prototype = {
 	overlapCirclePolygon : function(circle, polygon) {
 		// see if any point on the border of the the polygon is in the circle
 		var len = polygon.vertices.length;
-		for(var i = 0; i < len; ++i)
-		{
+        var i = len;
+        while(i--){
+		//for(var i = 0; i < len; ++i){
 			// if a segment of the polygon crosses the edge of the circle
-			if(this.intersectCircleSegment(circle, polygon.getSegment(i))) {
-				return true;
-			}
+			if(this.intersectCircleSegment(circle, polygon.getSegment(i))) return true;
 
 			// if a vertex of the polygon is inside the circle
-			if(polygon.getVertex(i).sub(circle.center).lengthSquared() < circle.radius * circle.radius) {
-				return true;
-			}
+			if(polygon.getVertex(i).sub(circle.center).lengthSquared() < circle.radius * circle.radius) return true;
+		
 		}
 
 		// otherwise, the circle could be completely inside the polygon
 		var point = circle.center;
-		for (var i = 0; i < len; ++i) {
+        i = len;
+        while(i--){
+		//for (var i = 0; i < len; ++i) {
 			// Is this point outside this edge?  if so, it's not inside the polygon
-			if (point.sub(polygon.vertices[i].add(polygon.center)).dot(polygon.segments[i].normal) > 0) {
-				return false;
-			}
+			if (point.sub(polygon.vertices[i].add(polygon.center)).dot(polygon.segments[i].normal) > 0) return false;
+			
 		}
 		// if the point was inside all of the edges, then it's inside the polygon.
 		return true;
 	},
 	overlapPolygons : function(polygon0, polygon1) {
 		var i;
-		var len0 = polygon0.vertices.length;
-		var len1 = polygon1.vertices.length;
+		//var len0 = polygon0.vertices.length;
+		//var len1 = polygon1.vertices.length;
 
 		// see if any corner of polygon 0 is inside of polygon 1
-		for(i = 0; i < len0; ++i) {
+        i = polygon0.vertices.length;
+        while(i--){
+		//for(i = 0; i < len0; ++i) {
 			if(this.containsPointPolygon(polygon0.vertices[i].add(polygon0.center), polygon1)) {
 				return true;
 			}
 		}
 
 		// see if any corner of polygon 1 is inside of polygon 0
-		for(i = 0; i < len1; ++i) {
+        i = polygon1.vertices.length;
+        while(i--){
+		//for(i = 0; i < len1; ++i) {
 			if(this.containsPointPolygon(polygon1.vertices[i].add(polygon1.center), polygon0)) {
 				return true;
 			}
@@ -651,12 +624,12 @@ RAPT.CollisionDetector.prototype = {
 
 	// CONTAINS
 	containsPointPolygon : function(point, polygon) {
-		var len = polygon.vertices.length;
-		for (var i = 0; i < len; ++i) {
+		//var len = polygon.vertices.length;
+        var i = polygon.vertices.length;
+        while(i--){
+		//for (var i = 0; i < len; ++i) {
 			// Is this point outside this edge?  if so, it's not inside the polygon
-			if (point.sub(polygon.vertices[i].add(polygon.center)).dot(polygon.segments[i].normal) > 0) {
-				return false;
-			}
+			if (point.sub(polygon.vertices[i].add(polygon.center)).dot(polygon.segments[i].normal) > 0) return false;
 		}
 		// if the point was inside all of the edges, then it's inside the polygon.
 		return true;
@@ -673,16 +646,10 @@ RAPT.CollisionDetector.prototype = {
 		return this.closestToShapeSegment(shape, ref_shapePoint, ref_worldPoint, segment);
 	},
 	distanceShapePoint : function(shape, point) {
-		switch(shape.getType())
-		{
-		case RAPT.SHAPE_CIRCLE:
-			return this.distanceCirclePoint(shape, point);
-
-		case RAPT.SHAPE_AABB:
-			return this.distancePolygonPoint(shape.getPolygon(), point);
-
-		case RAPT.SHAPE_POLYGON:
-			return this.distancePolygonPoint(shape, point);
+		switch(shape.getType()) {
+    		case RAPT.SHAPE_CIRCLE: return this.distanceCirclePoint(shape, point);
+    		case RAPT.SHAPE_AABB: return this.distancePolygonPoint(shape.getPolygon(), point);
+    		case RAPT.SHAPE_POLYGON: return this.distancePolygonPoint(shape, point);
 		}
 
 		alert('assertion failed in CollisionDetector.distanceShapePoint');
@@ -697,8 +664,9 @@ RAPT.CollisionDetector.prototype = {
 		var distance = Number.POSITIVE_INFINITY;
 
 		// see how close each endpoint of the segment is to a point on the middle of a polygon edge
-		for(var i = 0; i < polygon.vertices.length; i++)
-		{
+        var i = polygon.vertices.length;
+        while(i--){
+		//for(var i = 0; i < polygon.vertices.length; i++){
 			var polygonSegment = polygon.getSegment(i);
 
 			// find where this segment endpoint projects onto the polygon edge
@@ -722,14 +690,9 @@ RAPT.CollisionDetector.prototype = {
 	// CLOSEST TO
 	closestToShapeSegment : function(shape, ref_shapePoint, ref_segmentPoint, segment) {
 		switch(shape.getType()){
-		case RAPT.SHAPE_CIRCLE:
-			return this.closestToCircleSegment(shape, ref_shapePoint, ref_segmentPoint, segment);
-
-		case RAPT.SHAPE_AABB:
-			return this.closestToPolygonSegment(shape.getPolygon(), ref_shapePoint, ref_segmentPoint, segment);
-
-		case RAPT.SHAPE_POLYGON:
-			return this.closestToPolygonSegment(shape, ref_shapePoint, ref_segmentPoint, segment);
+    		case RAPT.SHAPE_CIRCLE: return this.closestToCircleSegment(shape, ref_shapePoint, ref_segmentPoint, segment);
+    		case RAPT.SHAPE_AABB: return this.closestToPolygonSegment(shape.getPolygon(), ref_shapePoint, ref_segmentPoint, segment);
+    		case RAPT.SHAPE_POLYGON: return this.closestToPolygonSegment(shape, ref_shapePoint, ref_segmentPoint, segment);
 		}
 
 		alert('assertion failed in CollisionDetector.closestToShapeSegment');
@@ -740,8 +703,7 @@ RAPT.CollisionDetector.prototype = {
 		this.intersectSegments(segment, new RAPT.Segment(circle.center, circle.center.sub(segment.normal)), ref_segmentProportion, ref_projectProportion, ref_segmentPoint);
 
 		// if the closest point is in the middle of the segment
-		if(ref_segmentProportion.ref >= 0 && ref_segmentProportion.ref <= 1)
-		{
+		if(ref_segmentProportion.ref >= 0 && ref_segmentProportion.ref <= 1){
 			// this returns the distance of the circle from the segment, along the normal
 			// since the normal is a unit vector and is also the shortest path, this works.
 			ref_shapePoint.ref = circle.center.sub(segment.normal.mul(circle.radius * (ref_projectProportion.ref > 0 ? 1 : -1)));
@@ -753,8 +715,7 @@ RAPT.CollisionDetector.prototype = {
 		var distanceSquaredToEnd = circle.center.sub(segment.end).lengthSquared();
 
 		// if the start is closer, use it
-		if(distanceSquaredToStart < distanceSquaredToEnd)
-		{
+		if(distanceSquaredToStart < distanceSquaredToEnd){
 			ref_segmentPoint.ref = segment.start;
 			// this was WAY off in the version before the port, was relative to circle.center instead of absolute:
 			ref_shapePoint.ref = circle.center.add(ref_segmentPoint.ref.sub(circle.center).unit().mul(circle.radius));
@@ -776,13 +737,11 @@ RAPT.CollisionDetector.prototype = {
 		{
 			var polygonPoint = polygon.getVertex(i);
 
-			for(var j = 0; j < 2; j++)
-			{
+			for(var j = 0; j < 2; j++){
 				var thisSegmentPoint = j == 0 ? segment.start : segment.end;
 				thisDistance = polygonPoint.sub(thisSegmentPoint).length();
 
-				if(thisDistance < distance)
-				{
+				if(thisDistance < distance){
 					distance = thisDistance;
 					ref_segmentPoint.ref = thisSegmentPoint;
 					ref_shapePoint.ref = polygonPoint;
@@ -809,8 +768,7 @@ RAPT.CollisionDetector.prototype = {
 			thisDistance = Math.abs(ref_polygonDistanceProportion.ref);
 
 			// if this is the closest we've found, use this
-			if(thisDistance < distance)
-			{
+			if(thisDistance < distance){
 				distance = thisDistance;
 				ref_segmentPoint.ref = ref_closestPoint.ref;
 				ref_shapePoint.ref = polygonPoint;
@@ -821,12 +779,10 @@ RAPT.CollisionDetector.prototype = {
 		var ref_polygonEdgeProportion = {}, ref_distanceProportion = {};
 
 		// see how close each endpoint of the segment is to a point on the middle of a polygon edge
-		for(var i = 0; i < polygon.vertices.length; i++)
-		{
+		for(var i = 0; i < polygon.vertices.length; i++){
 			var polygonSegment = polygon.getSegment(i);
 
-			for(var j = 0; j < 2; j++)
-			{
+			for(var j = 0; j < 2; j++){
 				var thisSegmentPoint = j == 0 ? segment.start : segment.end;
 
 				// find where this segment endpoint projects onto the polygon edge
@@ -839,8 +795,7 @@ RAPT.CollisionDetector.prototype = {
 
 				thisDistance = Math.abs(ref_distanceProportion.ref);
 
-				if(thisDistance < distance)
-				{
+				if(thisDistance < distance){
 					distance = thisDistance;
 					ref_segmentPoint.ref = thisSegmentPoint;
 					ref_shapePoint.ref = ref_closestPoint.ref;
@@ -877,14 +832,9 @@ RAPT.CollisionDetector.prototype = {
 	},
 	penetrationShapeSegment : function(shape, segment) {
 		switch(shape.getType()){
-		case RAPT.SHAPE_CIRCLE:
-			return this.penetrationCircleSegment(shape, segment);
-
-		case RAPT.SHAPE_AABB:
-			return this.penetrationPolygonSegment(shape.getPolygon(), segment);
-
-		case RAPT.SHAPE_POLYGON:
-			return this.penetrationPolygonSegment(shape, segment);
+    		case RAPT.SHAPE_CIRCLE: return this.penetrationCircleSegment(shape, segment);
+    		case RAPT.SHAPE_AABB: return this.penetrationPolygonSegment(shape.getPolygon(), segment);
+    		case RAPT.SHAPE_POLYGON: return this.penetrationPolygonSegment(shape, segment);
 		}
 
 		alert('assertion failed in CollisionDetector.penetrationShapeSegment');

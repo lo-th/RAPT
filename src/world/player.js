@@ -57,7 +57,7 @@ RAPT.Player = function (center, color) {
 	this._isDead = false;
 	this.reset(center, color);
 	this.info = [0,0,0];
-	this.group = null;
+	this.sprite = null;
 
 
 }
@@ -98,7 +98,7 @@ RAPT.Player.prototype = {
 	add3d: function(){
 		var uvs = [[0,0], [0,1], [1,0], [1,1], [2, 0], [2,1], [1,0], [1,1], [2, 0], [2,1]];
 		if(this.color==1) var uvs = [[0,2], [0,3], [1,2], [1,3], [2, 2], [2,3], [1,2], [1,3], [2, 2], [2,3]];
-		this.group = new RAPT.SpriteGroup({
+		this.sprite = new RAPT.SpriteGroup({
 
 			name:'player'+ this.color,
 			material:RAPT.MAT_PLAYER,
@@ -124,7 +124,9 @@ RAPT.Player.prototype = {
 
 	reset : function(center, color) {
 		
-		//if(this.group)this.group.clear()
+		if(this.sprite)this.sprite.remove();
+
+		this._isDead = false;
 		// keys (will be set automatically)
 		this.jumpKey = false;
 		this.crouchKey = false;
@@ -429,7 +431,7 @@ RAPT.Player.prototype = {
 		var g = 0.1;
 		var b = isRed ? 0.1 : 1;
 
-		this.group.visible(false);
+		this.sprite.visible(false);
 
 		var i = 500;
 		while(i--){
@@ -441,7 +443,7 @@ RAPT.Player.prototype = {
 		RAPT.gameState.incrementStat(RAPT.STAT_PLAYER_DEATHS);
 	},
 	onRespawn : function() {
-		this.group.visible(true);
+		this.sprite.visible(true);
 	},
 	tickParticles : function(seconds) {
 		// wall sliding particles
@@ -528,15 +530,15 @@ RAPT.Player.prototype = {
 		}
 
 		// update 3d sprite rotation
-		var i = this.group.length;
+		var i = this.sprite.length;
 		while(i--){
-			this.group.sprite[i].rotation.z = (frame.angles[i] * slowDownScale);
+			this.sprite.sprite[i].rotation.z = (frame.angles[i] * slowDownScale);
 		}
 
 		var offset = frame.center.mul(slowDownScale);
 		var pos = this.getCenter();
-		this.group.move(pos.x + offset.x * (this.facingRight ? -1 : 1), pos.y + offset.y);
-		this.group.flip(this.facingRight);
+		this.sprite.move(pos.x + offset.x * (this.facingRight ? -1 : 1), pos.y + offset.y);
+		this.sprite.flip(this.facingRight);
 	},
 	getInfo : function(){
 		var pos = this.getCenter();

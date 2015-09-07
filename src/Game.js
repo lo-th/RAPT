@@ -1,8 +1,35 @@
+(function(w){
+    var perfNow;
+    var perfNowNames = ['now', 'webkitNow', 'msNow', 'mozNow'];
+    if(!!w['performance']) for(var i = 0; i < perfNowNames.length; ++i){
+        var n = perfNowNames[i];
+        if(!!w['performance'][n]){
+            perfNow = function(){return w['performance'][n]()};
+            break;
+        }
+    }
+    if(!perfNow) perfNow = Date.now;
+    w.perfNow = perfNow;
+})(window);
+
+if (!Date.now) {
+  Date.now = function now() {
+    return new Date().getTime();
+  };
+}
+
+
 var RAPT = RAPT || {};
 
-RAPT.SHAPE_CIRCLE = 0;
-RAPT.SHAPE_AABB = 1;
-RAPT.SHAPE_POLYGON = 2;
+RAPT.MESSAGE = null;
+
+RAPT.LEVELS = [
+"Intro 1","Intro 2","Intro 3","Intro 4","It's Okay, You Can Press Escape","Doomed","Mr. Four-Arms","Chain","Traps","Walk Through Walls",
+"My Head 'Asplode","No Cover","Hunter Food","Run!","Shocker","Laserland","Up and Down","Leap Of Faith","Sandwiched", "Clock Tower","Stick Together",
+"Foursquare","Going Down Faster","Bomberland","Coordinated Panic","Going Down","Look But Don't Touch","Triple Threat",
+"Better Keep Moving","Tour","Cube"
+];
+
 
 RAPT.gameScale = 60;
 
@@ -22,7 +49,16 @@ RAPT.game = null;
 
 //_____________________________GAME
 
-RAPT.Game = function() {
+RAPT.Game = function(w, h, message) {
+
+	RAPT.MESSAGE = message;
+
+    this.w = w;
+    this.h = h;
+    //this.width2 = w / RAPT.gameScale;
+	//this.height2 = h / RAPT.gameScale;
+
+	this.json = null;
 	//this.camera = new RAPT.Camera();
 	this.fps = 0;
 	this.fixedPhysicsTick = 0;
@@ -30,30 +66,80 @@ RAPT.Game = function() {
 	this.isDone = false;
 	this.onWin = null;
 	//this.w3d = w3d;
+
+	this.timeNow = 0;
+    this.delta = 0;
+    this.then = 0;
+
+    this.timerStep = 1000/60;
+    this.lastTime = 0;
 	
 	// whether this game is the last level in the menu, this will be updated by main.js when the menu loads
 	//this.lastLevel = false;
 
 	RAPT.gameState = new RAPT.GameState();
+
 }
 
 RAPT.Game.prototype = {
 	constructor: RAPT.Game,
 	resize : function(w, h) {
-		this.width = w;
-		this.height = h;
-
-		this.width2 = w / RAPT.gameScale;
-		this.height2 = h / RAPT.gameScale;
-		this.playerA = RAPT.gameState.playerA;
-		this.playerB = RAPT.gameState.playerB;
-		//his.camera = new RAPT.Camera(RAPT.gameState.playerA, RAPT.gameState.playerB, w / RAPT.gameScale, h / RAPT.gameScale);
+		this.w = w;
+		this.h = h;
+		//this.width2 = w / RAPT.gameScale;
+		//this.height2 = h / RAPT.gameScale;
 	},
-	upGameScale:function(){
+	/*upGameScale:function(){
 		this.width2 = this.width / RAPT.gameScale;
 		this.height2 = this.height / RAPT.gameScale;
-	},
-	tick : function(seconds) {
+	},*/
+	update:function(){
+
+
+        //this.timeNow = this.now();//
+        this.timeNow = window.perfNow();
+        this.delta = this.timeNow - this.then;
+        //this.skip ++;
+
+        if (this.delta > this.timerStep) {
+            //console.time("start update loop")
+
+            //this.then = this.timeNow - (this.delta % this.timerStep);
+
+            //if(this.inPlay) this.frame ++;
+
+            //var neo = this.neo;
+            //var name = this.neoname;
+            //var data = this.data;
+            //var i = this.neo.length;
+            //while(i--) this.data[this.neo[i].name] = this.neo[i].update(this.frame);
+            //while(i--) { k = neo[i]; data[k.name] = k.update(this.frame); }
+
+            //while(i--) this.data[this.neoname[i]] = this.neo[i].update(this.frame);
+
+            //this.updateTime();
+            //this.autoScroll();
+            var sec = this.delta/1000;
+
+            RAPT.gameState.tick(sec);
+			RAPT.Particle.tick(sec);
+			RAPT.game.draw3d();
+
+            this.then = this.timeNow - (this.delta % this.timerStep);
+
+            /*if(this.frame >= this.nframe){ 
+                if(this.isLoop) this.moveTo(0);
+                else this.stop();
+            }*/
+
+           // console.timeEnd("start update loop")
+        }
+    },
+	tick : function() {
+		var currentTime = window.perfNow();//Date.now();//new Date();
+        var seconds = (currentTime - this.lastTime) / 1000;
+        this.lastTime = currentTime;
+
 		// when the screen isn't split, standing at the original spawn point:
 		// * Triple Threat
 		//	 - variable physics tick: 30 FPS
@@ -75,12 +161,15 @@ RAPT.Game.prototype = {
 				this.fixedPhysicsTick -= SECONDS_BETWEEN_TICKS;
 				RAPT.gameState.tick(SECONDS_BETWEEN_TICKS);
 				RAPT.Particle.tick(SECONDS_BETWEEN_TICKS);
+				this.draw3d();
 			}
 		} else {
 			// variable physics tick
 			RAPT.gameState.tick(seconds);
 			RAPT.Particle.tick(seconds);
+			this.draw3d();
 		}
+
 
 		// smooth the fps a bit
 		this.fps = RAPT.lerp(this.fps, 1 / seconds, 0.05);
@@ -99,16 +188,16 @@ RAPT.Game.prototype = {
 
 	draw3d : function(){
 		var mid = this.width2*0.25;
-		var positionA = this.playerA.getCenter();
-		var positionB = this.playerB.getCenter();
+		var positionA = RAPT.gameState.playerA.getCenter();
+		var positionB = RAPT.gameState.playerB.getCenter();
 
-		//this.w3d.upPlayers(positionA, positionB);
-		//RAPT.W3D.upPlayers(positionA, positionB);
+        var w = this.w / RAPT.gameScale;
+        var h = this.h / RAPT.gameScale;
 
 		var center = positionA.add(positionB).div(2);
 		// maximum distance between a player and the center is the distance to the box that is half the size of the screen
 		var temp = positionB.sub(positionA).unit();
-		temp = new RAPT.Vector(this.width2 / Math.abs(temp.x), this.height2 / Math.abs(temp.y));
+		temp = new RAPT.Vector(w / Math.abs(temp.x), h / Math.abs(temp.y));
 		var maxLength = Math.min(temp.x, temp.y) * 0.25;
 
 		var isSplit = (positionB.sub(positionA).lengthSquared() > 4*maxLength*maxLength);
@@ -153,7 +242,7 @@ RAPT.Game.prototype = {
 			RAPT.W3D.effect.setAngle(-angle);
 			RAPT.W3D.effect.setFuzzy(splitSize);
 		}
-		RAPT.W3D.tell(this.fps.toFixed(0));
+		//RAPT.W3D.tell(this.fps.toFixed(0));
 
 
 		if (RAPT.gameState.gameStatus === RAPT.GAME_WON) {
@@ -166,6 +255,22 @@ RAPT.Game.prototype = {
 
 	},
 
+	load : function (levelname) {
+        var xhr = new XMLHttpRequest();
+        var _this = this;
+        xhr.onreadystatechange =  function() {
+            if (xhr.readyState == 4){
+            	_this.json = JSON.parse(this.responseText);
+            	_this.restart();
+            }
+        };
+        xhr.open("get", 'level/'+levelname+'.json', true);
+        xhr.send();
+    },
+    restart : function() {
+        RAPT.Particle.reset();
+        RAPT.gameState.loadLevelFromJSON(this.json);
+    },
 	keyDown : function(e) {
 		var keyCode = e.which;
 		var action = RAPT.Keys.fromKeyCode(keyCode);
@@ -176,6 +281,10 @@ RAPT.Game.prototype = {
 			e.preventDefault();
 			e.stopPropagation();
 		}
+		if (keyCode === 32) {// space
+            if (RAPT.gameState.gameStatus === RAPT.GAME_WON) playNext();
+            else this.restart();
+        }
 	},
 	keyUp : function(e) {
 		var keyCode = e.which;
@@ -189,4 +298,36 @@ RAPT.Game.prototype = {
 		}
 	}
 }
+
+
+RAPT.Keys = {
+	keyMap: {
+		'killKey': 75,     // k key
+
+		// player a
+		'a-jumpKey': 38,   // up arrow key
+		'a-crouchKey': 40, // down arrow key
+		'a-leftKey': 37,   // left arrow key
+		'a-rightKey': 39,  // right arrow key
+
+		// player b
+		'b-jumpKey': 87,   // w key
+		'b-jumpKey2': 90,   // z key
+		'b-crouchKey': 83, // s key
+		'b-leftKey': 65,   // a key
+		'b-leftKey2': 81,   // q key
+		'b-rightKey': 68   // d key
+	},
+
+	fromKeyCode: function(keyCode) {
+		for (var name in this.keyMap) {
+			if (keyCode == this.keyMap[name]) {
+				if(name=='b-jumpKey2')name = 'b-jumpKey';
+				if(name=='b-leftKey2')name = 'b-leftKey';
+				return name;
+			}
+		}
+		return null;
+	},
+};
 

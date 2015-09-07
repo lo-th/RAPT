@@ -19,17 +19,18 @@ RAPT.drawMaxY = 0;
 
 // class GameState
 RAPT.GameState = function () {
-	//this.w3d = w3d;
 
-	this.world = new RAPT.World(50, 50, new RAPT.Vector(0.5, 0.5), new RAPT.Vector(0.5, 0.5));
+	this.world = new RAPT.World();
 	this.collider = new RAPT.CollisionDetector();
 	this.edgeQuad = new RAPT.EdgeQuad();
 	
 	// Player color must be EDGE_RED or EDGE_BLUE to support proper collisions with doors!
-	this.playerA = new RAPT.Player(this.world.spawnPoint, RAPT.EDGE_RED);
-	this.playerB = new RAPT.Player(this.world.spawnPoint, RAPT.EDGE_BLUE);
+
+	this.playerA = new RAPT.Player(new RAPT.Vector(), RAPT.EDGE_RED);
+	this.playerB = new RAPT.Player(new RAPT.Vector(), RAPT.EDGE_BLUE);
+
 	this.spawnPointParticleTimer = 0;
-	this.spawnPointOffset = new RAPT.Vector(0, 0);
+	this.spawnPointOffset = new RAPT.Vector();
 	this.enemies = [];
 	this.doors = [];
 	this.timeSinceStart = 0;
@@ -166,6 +167,7 @@ RAPT.GameState.prototype = {
 		}
 	},
 	getDoor : function(doorIndex) { return this.doors[doorIndex]; },
+
 	// Kill all entities that intersect a given edge
 	killAll : function(edge) {
 		var i;
@@ -260,24 +262,45 @@ RAPT.GameState.prototype = {
 		info[1] = this.playerB.getInfo();
 		return info;
     },
+    message : function(s){
+		RAPT.MESSAGE.innerHTML = s;
+	},
 
 
     //---------------------------------------- LOADER
+    reset:function(){
+    	this.spawnPointParticleTimer = 0;
+		this.spawnPointOffset = new RAPT.Vector();
+		this.enemies = [];
+		this.doors = [];
+		this.timeSinceStart = 0;
+
+		// keys (will be set automatically)
+		this.killKey = false;
+
+		// if you need to tell if the world has been modified (door has been opened/closed), just watch
+		// for changes to this variable, which can be incremented by gameState.recordModification()
+		this.modificationCount = 0;
+
+		this.gameStatus = RAPT.GAME_IN_PLAY;
+		this.stats = [0, 0, 0, 0];
+    },
 
     loadLevelFromJSON : function(json) {
+    	this.reset();
 		// values are quoted (like json['width'] instead of json.width) so closure compiler doesn't touch them
 		var w = json['width'], h = json['height'], x, y;
 
 		// Reset stats
-		this.stats = [0, 0, 0, 0];
+		//this.stats = [0, 0, 0, 0];
 
 		// create 3d level
-		//this.w3d.initLevel(json);
 		var start = this.jsonToVec(json['start']);
 		var end = this.jsonToVec(json['end']);
 
 		// Load size, spawn point, and goal
-		this.world = new RAPT.World(w, h, start, end);
+		//this.world = new RAPT.World(w, h, start, end);
+		this.world.init(w, h, start, end);
 		
 		// Load cells & create edges
 		x = w;
@@ -313,8 +336,6 @@ RAPT.GameState.prototype = {
 
 		this.addSpawnPoint(start);
 		this.addGoal(end);
-
-
 		
 		// Load entities
 		for (var i = 0; i < json['entities'].length; ++i) {

@@ -53,23 +53,31 @@ RAPT.World3D = function(canvas){
         //textures[i].generateMipmaps = false;
     }
 
+
     // create materials
-    RAPT.MAT_LEVEL = new THREE.MeshBasicMaterial( { map:textures[0], color: 0xFFFFFF, shading: THREE.FlatShading, wireframe: false, transparent: true} );
+     //RAPT.MAT_LEVEL = new THREE.MeshBasicMaterial( { map:textures[0], color: 0xFFFFFF, shading: THREE.FlatShading, wireframe: false, transparent: true} );
+    RAPT.MAT_LEVEL = new THREE.ShaderMaterial(RAPT.MakeBasicShader({map:textures[0], transparent: true}));
+   
 
-    RAPT.MAT_DOOR_R = new THREE.MeshBasicMaterial( { map:textures[4], color: 0xFF0000, shading: THREE.FlatShading, wireframe: false, transparent: true} );
+    /*RAPT.MAT_DOOR_R = new THREE.MeshBasicMaterial( { map:textures[4], color: 0xFF0000, shading: THREE.FlatShading, wireframe: false, transparent: true} );
     RAPT.MAT_DOOR_B = new THREE.MeshBasicMaterial( { map:textures[4], color: 0x0066FF, shading: THREE.FlatShading, wireframe: false, transparent: true} );
-    RAPT.MAT_DOOR = new THREE.MeshBasicMaterial( { map:textures[4], color: 0xFFFFFF, shading: THREE.FlatShading, wireframe: false, transparent: true} );
-    //   RAPT.MAT_LEVEL = new THREE.MeshBasicMaterial( { map:textures[0], color: 0xFFFFFF, shading: THREE.FlatShading, wireframe: false, transparent: true} );
+    RAPT.MAT_DOOR = new THREE.MeshBasicMaterial( { map:textures[4], color: 0xFFFFFF, shading: THREE.FlatShading, wireframe: false, transparent: true} );*/
 
-    RAPT.MAT_PLAYER = new THREE.MeshBasicMaterial( { map: textures[2], shading: THREE.FlatShading, wireframe: false, transparent: true, side:THREE.DoubleSide, alphaTest: 0.1 } );
-    RAPT.MAT_ENEMY = new THREE.MeshBasicMaterial( { map: textures[3], shading: THREE.FlatShading, wireframe: false, transparent: true, side:THREE.DoubleSide, alphaTest: 0.1 } );
+    RAPT.MAT_DOOR_R = new THREE.ShaderMaterial(RAPT.MakeBasicShader({map:textures[4], color: 0xFF0000, transparent: true}));
+    RAPT.MAT_DOOR_B = new THREE.ShaderMaterial(RAPT.MakeBasicShader({map:textures[4], color: 0x0066FF, transparent: true}));
+    RAPT.MAT_DOOR = new THREE.ShaderMaterial(RAPT.MakeBasicShader({map:textures[4], color: 0xFFFFFF, transparent: true}));
+ 
+    //RAPT.MAT_PLAYER = new THREE.MeshBasicMaterial( { map: textures[2], shading: THREE.FlatShading, wireframe: false, transparent: true, side:THREE.DoubleSide, alphaTest: 0.1 } );
+    RAPT.MAT_PLAYER = new THREE.ShaderMaterial(RAPT.MakeBasicShader({map:textures[2], transparent: true, side:THREE.DoubleSide, alphaTest: 0.1 }));
+
+
+    //RAPT.MAT_ENEMY = new THREE.MeshBasicMaterial( { map: textures[3], shading: THREE.FlatShading, wireframe: false, transparent: true, side:THREE.DoubleSide, alphaTest: 0.1 } );
+    RAPT.MAT_ENEMY = new THREE.ShaderMaterial(RAPT.MakeBasicShader({map:textures[3], transparent: true, side:THREE.DoubleSide, alphaTest: 0.1 }));
  
     // init 3d particles
     RAPT.Particle.init3d( this.scene, textures[1] );
 
-    var geo = new THREE.SphereBufferGeometry (0.5);
-    var mat1 = new THREE.MeshBasicMaterial( { color: 0xFF0000, shading: THREE.FlatShading, wireframe: true, transparent: true } )
-    var mat2 = new THREE.MeshBasicMaterial( { color: 0x0000FF, shading: THREE.FlatShading, wireframe: true, transparent: true } )
+    
 
     this.doors = [];
     this.sprites = [];
@@ -145,10 +153,10 @@ RAPT.World3D.prototype = {
         //RAPT.gameScale += delta;
         var n = (RAPT.gameScale + (delta/3)).toFixed(0)*1;
 
-        RAPT.gameScale = n;
-        RAPT.game.upGameScale();
+        //RAPT.gameScale = n;
+        //game.upGameScale();
 
-        console.log(this.vs.d, RAPT.gameScale, distance);
+        //console.log(this.vs.d, RAPT.gameScale, distance);
         //RAPT.gameScale -= delta
 
         this.camera[0].position.z = this.vs.d;
