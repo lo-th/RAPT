@@ -119,7 +119,7 @@ var basic = [
 '        var direction = new RAPT.Vector().fromAngle(RAPT.lerp(0, 2*Math.PI, Math.random()));',
 '        direction = new RAPT.Vector().add(direction.mul(RAPT.lerp(1, 10, Math.random())));',
 '        RAPT.Particle()',
-'            .triangle()',
+'            .type("triangle")// triangle, circle, line, custom',
 '            .position(new RAPT.Vector(0, 0))',
 '            .velocity(direction)',
 '            .radius(0.01, 0.1)',

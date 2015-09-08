@@ -32,8 +32,9 @@ RAPT.ParticleInstance.prototype = {
 		this.m_elasticity = 0;
 		this.m_decay = 1;
 		this.m_expand = 1;
-		this.m_pos = new THREE.Vector3();//new RAPT.Vector(0, 0);
-		this.m_velocity = new THREE.Vector3(); //new RAPT.Vector(0, 0);
+		this.m_uvpos =  new THREE.Vector2();
+		this.m_pos = new THREE.Vector3();
+		this.m_velocity = new THREE.Vector3();
 		this.m_angle = 0;
 		this.m_angularVelocity = 0;
 		this.m_drawFunc = null;
@@ -41,8 +42,7 @@ RAPT.ParticleInstance.prototype = {
 	tick : function(seconds) {
 		if(this.m_bounces < 0)  return false;
 
-		this.m_color.w *= Math.pow(this.m_decay, seconds);
-		this.m_alpha *= Math.pow(this.m_decay, seconds);
+		this.m_color.w *= Math.pow(this.m_decay, seconds);// alpha
 		this.m_radius *= Math.pow(this.m_expand, seconds);
 		this.m_velocity.y -= this.m_gravity * seconds;
 		this.m_pos.add(this.m_velocity.clone().multiplyScalar(seconds));
@@ -68,7 +68,17 @@ RAPT.ParticleInstance.prototype = {
         return this;
 	},
 	bounces : function(min, max) { this.m_bounces = Math.round(this.randOrTakeFirst(min, max)); return this; },
-	type:function(t) { this.m_type = t; return this; },
+	type:function(t) {
+		var x = 0, y = 0;
+		switch(t){
+			case 'circle': x=0; y=1; break;
+			case 'triangle': x=2; y=1; break;
+			case 'line': x=4; y=1; break;
+			case 'custom': x=6; y=1; break;
+		}
+		this.m_uvpos.set(x,y);
+		return this;
+	},
 	circle : function() { this.m_type = RAPT.PARTICLE_CIRCLE; return this; },
 	triangle : function() { this.m_type = RAPT.PARTICLE_TRIANGLE; return this; },
 	line : function() { this.m_type = RAPT.PARTICLE_LINE; return this; },
@@ -166,7 +176,9 @@ RAPT.Particle = (function() {
 			    'varying vec2 vPos;',
 			    'varying float vAngle;',
 
+			    // map tile position see Shader.js
 			    RAPT.tileUV,
+			    // map tile rotation see Shader.js
 			    RAPT.rotUV,
 
 			    'void main(){',
@@ -228,7 +240,14 @@ RAPT.Particle = (function() {
 			colors[i * 4 + 2] = particles[i].m_color.z;
 			colors[i * 4 + 3] = particles[i].m_color.w;
 
-			uvpos[i * 2 + 0] = particles[i].m_type*2;
+			if(particles[i].m_uvpos.x!==0 && particles[i].m_uvpos.y!==0){
+				uvpos[i * 2 + 0] = particles[i].m_uvpos.x;
+				uvpos[i * 2 + 1] = particles[i].m_uvpos.y;
+			} else {
+				uvpos[i * 2 + 0] = particles[i].m_type*2;
+			}
+
+			
 			angles[i] = particles[i].m_angle;
 			sizes[i] = particles[i].m_radius * 3;
 
