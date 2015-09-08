@@ -26,6 +26,7 @@
 
 <script> 
 var PP;
+
 var content = document.createElement('div');
 content.className = 'editor';
 document.body.appendChild( content );
@@ -33,7 +34,6 @@ document.body.appendChild( content );
 var errorLines = [];
 var widgets = [];
 var interval = null;
-
 var editor = CodeMirror(this.content, {
     lineNumbers: false,
     matchBrackets: true,
@@ -49,60 +49,48 @@ var editor = CodeMirror(this.content, {
 editor.on('change', function() { onChange() } );
 
 function validate( value ){
-    //var editor = this.editor;
-    var mode = 'text/javascript'//this.mode;
-   
     return editor.operation( function () {
-        while ( errorLines.length > 0 ) {
-            editor.removeLineClass( errorLines.shift(), 'background', 'errorLine' );
-        }
-        for ( var i = 0; i < widgets.length; i ++ ) {
-            editor.removeLineWidget( widgets[ i ] );
-        }
+        while ( errorLines.length > 0 ) editor.removeLineClass( errorLines.shift(), 'background', 'errorLine' );
+        var i = widgets.length;
+        while(i--) editor.removeLineWidget( widgets[ i ] );
         widgets.length = 0;
         var string = value;
-
         try {
             var result = esprima.parse( string, { tolerant: true } ).errors;
-            for ( var i = 0; i < result.length; i ++ ) {
+            i = result.length;
+            while(i--){
                 var error = result[ i ];
-                var message = document.createElement( 'div' );
-                message.className = 'esprima-error';
-                message.textContent = error.message.replace(/Line [0-9]+: /, '');
-                var lineNumber = error.lineNumber - 1;
-                errorLines.push( lineNumber );
-                editor.addLineClass( lineNumber, 'background', 'errorLine' );
-                var widget = editor.addLineWidget( lineNumber, message );
+                var m = document.createElement( 'div' );
+                m.className = 'esprima-error';
+                m.textContent = error.message.replace(/Line [0-9]+: /, '');
+                var l = error.lineNumber - 1;
+                errorLines.push( l );
+                editor.addLineClass( l, 'background', 'errorLine' );
+                var widget = editor.addLineWidget( l, m );
                 widgets.push( widget );
             }
         } catch ( error ) {
-            var message = document.createElement( 'div' );
-            message.className = 'esprima-error';
-            message.textContent = error.message.replace(/Line [0-9]+: /, '');
-            var lineNumber = error.lineNumber - 1;
-            errorLines.push( lineNumber );
-            editor.addLineClass( lineNumber, 'background', 'errorLine' );
-            var widget = editor.addLineWidget( lineNumber, message );
+            var m = document.createElement( 'div' );
+            m.className = 'esprima-error';
+            m.textContent = error.message.replace(/Line [0-9]+: /, '');
+            var l = error.lineNumber - 1;
+            errorLines.push( l );
+            editor.addLineClass( l, 'background', 'errorLine' );
+            var widget = editor.addLineWidget( l, m );
             widgets.push( widget );
         }
         return errorLines.length === 0;
     });
 }
-function set(text){
+
+function setEditor(text){
     editor.setValue(text);
 }
 
 function onChange(){
-    //var _this = this;
-        this.mode = this.editor.getOption('mode');
-       // if(!this.end){
-            clearTimeout( interval );
-            var value = this.editor.getValue();
-            if(validate( value )) interval = setTimeout( function() {inject(value);}, 500);
-        //}
-
-   // var value = editor.getValue();
-   // inject(value);
+    clearTimeout( interval );
+    var value = this.editor.getValue();
+    if(validate( value )) interval = setTimeout( function() {inject(value);}, 500);
 }
 
 function inject(value){
@@ -127,13 +115,16 @@ function init() {
     scene = new THREE.Scene();
     clock = new THREE.Clock;
 
-    renderer = new THREE.WebGLRenderer();
+    renderer = new THREE.WebGLRenderer({canvas:document.getElementById( 'canvas' )});
     renderer.setPixelRatio( window.devicePixelRatio );
     renderer.setSize( window.innerWidth, window.innerHeight );
     renderer.setClearColor( 0x333333 , 1.0);
-    document.body.appendChild( renderer.domElement );
 
-    //
+    var helper = new THREE.GridHelper( 5, 1 );
+    helper.setColors( 0x0000ff, 0x808080 );
+    helper.position.y = - 2.5;
+    scene.add( helper );
+   
     RAPT.Particle.init3d( scene, THREE.ImageUtils.loadTexture( 'textures/particle.png' ) );
 
     window.addEventListener( 'resize', onWindowResize, false );
@@ -153,9 +144,14 @@ function animate() {
 
     requestAnimationFrame( animate );
 
-    var currentTime = Date.now();
-    var seconds = (currentTime - lastTime) * 0.001;
-    lastTime = currentTime;
+    var time = performance.now();
+    var seconds = (time - lastTime) * 0.001;
+    lastTime = time;
+
+    var camtime = - time * 0.0003;
+    camera.position.x = 10 * Math.cos( camtime );
+    camera.position.z = 10 * Math.sin( camtime );
+    camera.lookAt( scene.position );
 
     if(PP!==undefined) PP();
 
@@ -177,7 +173,7 @@ var basic = [
 '            .position(new RAPT.Vector(0, 0))',
 '            .velocity(velocity)',
 '            .radius(0.01, 0.1)',
-'            .gravity(-5)',
+'            .gravity(-5)// (min, max, axe) axe:"x", "y", "z"',
 '            .bounces(0, 4)',
 '            .elasticity(0.05, 0.9)',
 '            .decay(0.01, 0.02)',
@@ -189,5 +185,5 @@ var basic = [
 '}'
 ].join("\n");
 
-set(basic);
+setEditor(basic);
 </script></body></html>

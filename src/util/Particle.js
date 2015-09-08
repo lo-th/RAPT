@@ -28,7 +28,7 @@ RAPT.ParticleInstance.prototype = {
 		this.m_color =  new THREE.Vector4();
 		this.m_type = 0;
 		this.m_radius = 0;
-		this.m_gravity = 0;
+		this.m_gravity = new THREE.Vector3();
 		this.m_elasticity = 0;
 		this.m_decay = 1;
 		this.m_expand = 1;
@@ -44,7 +44,9 @@ RAPT.ParticleInstance.prototype = {
 
 		this.m_color.w *= Math.pow(this.m_decay, seconds);// alpha
 		this.m_radius *= Math.pow(this.m_expand, seconds);
-		this.m_velocity.y -= this.m_gravity * seconds;
+		//this.m_velocity.y -= this.m_gravity * seconds;
+
+		this.m_velocity.sub(this.m_gravity.clone().multiplyScalar(seconds));
 		this.m_pos.add(this.m_velocity.clone().multiplyScalar(seconds));
 		
 		this.m_angle += this.m_angularVelocity * seconds;
@@ -87,7 +89,7 @@ RAPT.ParticleInstance.prototype = {
 	color : function(r, g, b, a) { this.m_color.set(r||0, g||0, b||0, a||0); return this; },
 	mixColor : function(r, g, b, a) { var percent = Math.random(); this.m_color.lerp(new THREE.Vector4(r, g, b, a), percent); return this; },
 	radius : function(min, max) { this.m_radius = this.randOrTakeFirst(min, max); return this; },
-	gravity : function(min, max) { this.m_gravity = this.randOrTakeFirst(min, max); return this; },
+	gravity : function(min, max, axe) { this.m_gravity[axe || 'y'] = this.randOrTakeFirst(min, max); return this; },
 	elasticity : function(min, max) { this.m_elasticity = this.randOrTakeFirst(min, max); return this; },
 	decay : function(min, max) { this.m_decay = this.randOrTakeFirst(min, max); return this; },
 	expand : function(min, max) { this.m_expand = this.randOrTakeFirst(min, max); return this; },
