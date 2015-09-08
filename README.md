@@ -17,3 +17,7 @@ _ random level/dungeon creator like Terraria or starbound...<br>
 
 Let's play<br>
 [**START**](http://lo-th.github.io/RAPT/index.html)
+
+
+labs
+[particle](http://lo-th.github.io/RAPT/particle_labs.html)
