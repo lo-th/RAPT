@@ -44,9 +44,11 @@ RAPT.ParticleInstance.prototype = {
 
 		this.m_color.w *= Math.pow(this.m_decay, seconds);// alpha
 		this.m_radius *= Math.pow(this.m_expand, seconds);
-		//this.m_velocity.y -= this.m_gravity * seconds;
-
-		this.m_velocity.sub(this.m_gravity.clone().multiplyScalar(seconds));
+		//
+		if(this.m_gravity.x!==0)this.m_velocity.x -= this.m_gravity.x * seconds;
+		if(this.m_gravity.y!==0)this.m_velocity.y -= this.m_gravity.y * seconds;
+		if(this.m_gravity.z!==0)this.m_velocity.z -= this.m_gravity.z * seconds;
+		//this.m_velocity.sub(this.m_gravity.clone().multiplyScalar(seconds));
 		this.m_pos.add(this.m_velocity.clone().multiplyScalar(seconds));
 		
 		this.m_angle += this.m_angularVelocity * seconds;

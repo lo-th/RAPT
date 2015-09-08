@@ -135,7 +135,6 @@ function onWindowResize() {
 
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
-
     renderer.setSize( window.innerWidth, window.innerHeight );
 
 }
@@ -170,7 +169,7 @@ var basic = [
 '        velocity = new THREE.Vector3(Math.cos(angle), Math.sin(angle), 0).multiplyScalar(distance);',
 '        RAPT.Particle()',
 '            .type("triangle")// triangle, circle, line, custom',
-'            .position(new RAPT.Vector(0, 0))',
+'            .position(new THREE.Vector3())',
 '            .velocity(velocity)',
 '            .radius(0.01, 0.1)',
 '            .gravity(-5)// (min, max, axe) axe:"x", "y", "z"',
