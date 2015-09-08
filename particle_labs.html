@@ -13,6 +13,7 @@
 
 <script src="js/three.min.js"></script>
 <script src="js/codemirror.min.js"></script>
+<script src="js/esprima.min.js"></script>
 <script src="src/util/Particle.js"></script>
 <script src="src/util/Shader.js"></script>
 <script src="src/util/Math.js"></script>
@@ -29,6 +30,10 @@ var content = document.createElement('div');
 content.className = 'editor';
 document.body.appendChild( content );
 
+var errorLines = [];
+var widgets = [];
+var interval = null;
+
 var editor = CodeMirror(this.content, {
     lineNumbers: false,
     matchBrackets: true,
@@ -43,13 +48,61 @@ var editor = CodeMirror(this.content, {
 
 editor.on('change', function() { onChange() } );
 
+function validate( value ){
+    //var editor = this.editor;
+    var mode = 'text/javascript'//this.mode;
+   
+    return editor.operation( function () {
+        while ( errorLines.length > 0 ) {
+            editor.removeLineClass( errorLines.shift(), 'background', 'errorLine' );
+        }
+        for ( var i = 0; i < widgets.length; i ++ ) {
+            editor.removeLineWidget( widgets[ i ] );
+        }
+        widgets.length = 0;
+        var string = value;
+
+        try {
+            var result = esprima.parse( string, { tolerant: true } ).errors;
+            for ( var i = 0; i < result.length; i ++ ) {
+                var error = result[ i ];
+                var message = document.createElement( 'div' );
+                message.className = 'esprima-error';
+                message.textContent = error.message.replace(/Line [0-9]+: /, '');
+                var lineNumber = error.lineNumber - 1;
+                errorLines.push( lineNumber );
+                editor.addLineClass( lineNumber, 'background', 'errorLine' );
+                var widget = editor.addLineWidget( lineNumber, message );
+                widgets.push( widget );
+            }
+        } catch ( error ) {
+            var message = document.createElement( 'div' );
+            message.className = 'esprima-error';
+            message.textContent = error.message.replace(/Line [0-9]+: /, '');
+            var lineNumber = error.lineNumber - 1;
+            errorLines.push( lineNumber );
+            editor.addLineClass( lineNumber, 'background', 'errorLine' );
+            var widget = editor.addLineWidget( lineNumber, message );
+            widgets.push( widget );
+        }
+        return errorLines.length === 0;
+    });
+}
 function set(text){
     editor.setValue(text);
 }
 
 function onChange(){
-    var value = editor.getValue();
-    inject(value);
+    //var _this = this;
+        this.mode = this.editor.getOption('mode');
+       // if(!this.end){
+            clearTimeout( interval );
+            var value = this.editor.getValue();
+            if(validate( value )) interval = setTimeout( function() {inject(value);}, 500);
+        //}
+
+   // var value = editor.getValue();
+   // inject(value);
 }
 
 function inject(value){
@@ -114,14 +167,15 @@ function animate() {
 
 var basic = [
 'var PP = function(){',
-'    var i = 100;',
+'    var i = 100, angle, distance, velocity;',
 '    while(i--){',
-'        var direction = new RAPT.Vector().fromAngle(RAPT.lerp(0, 2*Math.PI, Math.random()));',
-'        direction = new RAPT.Vector().add(direction.mul(RAPT.lerp(1, 10, Math.random())));',
+'        angle = RAPT.randInRange(0, 2*Math.PI);',
+'        distance = RAPT.randInRange(1, 10);',
+'        velocity = new THREE.Vector3(Math.cos(angle), Math.sin(angle), 0).multiplyScalar(distance);',
 '        RAPT.Particle()',
 '            .type("triangle")// triangle, circle, line, custom',
 '            .position(new RAPT.Vector(0, 0))',
-'            .velocity(direction)',
+'            .velocity(velocity)',
 '            .radius(0.01, 0.1)',
 '            .gravity(-5)',
 '            .bounces(0, 4)',
