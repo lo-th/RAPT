@@ -8,6 +8,7 @@
 //
 // Particle().position(center).color(0.9, 0, 0, 0.5).mixColor(1, 0, 0, 1).gravity(1).triangle()
 // Particle().position(center).velocity(velocity).color(0, 0, 0, 1).gravity(0.4, 0.6).circle()
+
 var RAPT = RAPT || {};
 
 RAPT.PARTICLE_CIRCLE = 0;
@@ -24,36 +25,31 @@ RAPT.ParticleInstance.prototype = {
 	init : function() {
 		// must use 'm_' here because many setting functions have the same name as their property
 		this.m_bounces = 0;
-		//this.m_first = false;
+		this.m_color =  new THREE.Vector4();
 		this.m_type = 0;
-		this.m_red = 0;
-		this.m_green = 0;
-		this.m_blue = 0;
-		this.m_alpha = 0;
 		this.m_radius = 0;
 		this.m_gravity = 0;
 		this.m_elasticity = 0;
 		this.m_decay = 1;
 		this.m_expand = 1;
-		this.m_position = new RAPT.Vector(0, 0);
-		this.m_velocity = new RAPT.Vector(0, 0);
+		this.m_pos = new THREE.Vector3();//new RAPT.Vector(0, 0);
+		this.m_velocity = new THREE.Vector3(); //new RAPT.Vector(0, 0);
 		this.m_angle = 0;
 		this.m_angularVelocity = 0;
 		this.m_drawFunc = null;
 	},
 	tick : function(seconds) {
-		if(this.m_bounces < 0) {
-			return false;
-		}
+		if(this.m_bounces < 0)  return false;
+
+		this.m_color.w *= Math.pow(this.m_decay, seconds);
 		this.m_alpha *= Math.pow(this.m_decay, seconds);
 		this.m_radius *= Math.pow(this.m_expand, seconds);
 		this.m_velocity.y -= this.m_gravity * seconds;
-		this.m_position = this.m_position.add(this.m_velocity.mul(seconds));
+		this.m_pos.add(this.m_velocity.clone().multiplyScalar(seconds));
 		
 		this.m_angle += this.m_angularVelocity * seconds;
-		if(this.m_alpha < 0.05) {
-			this.m_bounces = -1;
-		}
+		if(this.m_alpha < 0.05) this.m_bounces = -1;
+		if(this.m_color.w < 0.05) this.m_bounces = -1;
 		return (this.m_bounces >= 0);
 	},
 
@@ -66,32 +62,20 @@ RAPT.ParticleInstance.prototype = {
 
 	// all of these functions support chaining to fix constructor with 200 arguments
 	fixangle : function(){
-		var v1 = this.m_position;//.clone();
-		var v2 = v1.add(this.m_velocity.mul(10));
+		var v1 = this.m_pos;
+		var v2 = this.m_pos.clone().add(this.m_velocity.clone().multiplyScalar(10));
 		this.m_angle = -(Math.atan2((v2.y-v1.y) , (v2.x-v1.x))+Math.PI);
         return this;
 	},
 	bounces : function(min, max) { this.m_bounces = Math.round(this.randOrTakeFirst(min, max)); return this; },
+	type:function(t) { this.m_type = t; return this; },
 	circle : function() { this.m_type = RAPT.PARTICLE_CIRCLE; return this; },
 	triangle : function() { this.m_type = RAPT.PARTICLE_TRIANGLE; return this; },
 	line : function() { this.m_type = RAPT.PARTICLE_LINE; return this; },
 	custom : function(drawFunc) { this.m_type = RAPT.PARTICLE_CUSTOM; this.m_drawFunc = drawFunc; return this; },
 	customSprite : function(sprite) { /*this.m_type = RAPT.PARTICLE_CUSTOM; this.m_drawFunc = drawFunc; */return this; },
-	color : function(r, g, b, a) {
-		this.m_red = r;
-		this.m_green = g;
-		this.m_blue = b;
-		this.m_alpha = a;
-		return this;
-	},
-	mixColor : function(r, g, b, a) {
-		var percent = Math.random();
-		this.m_red = RAPT.lerp(this.m_red, r, percent);
-		this.m_green = RAPT.lerp(this.m_green, g, percent);
-		this.m_blue = RAPT.lerp(this.m_blue, b, percent);
-		this.m_alpha = RAPT.lerp(this.m_alpha, a, percent);
-		return this;
-	},
+	color : function(r, g, b, a) { this.m_color.set(r||0, g||0, b||0, a||0); return this; },
+	mixColor : function(r, g, b, a) { var percent = Math.random(); this.m_color.lerp(new THREE.Vector4(r, g, b, a), percent); return this; },
 	radius : function(min, max) { this.m_radius = this.randOrTakeFirst(min, max); return this; },
 	gravity : function(min, max) { this.m_gravity = this.randOrTakeFirst(min, max); return this; },
 	elasticity : function(min, max) { this.m_elasticity = this.randOrTakeFirst(min, max); return this; },
@@ -99,8 +83,8 @@ RAPT.ParticleInstance.prototype = {
 	expand : function(min, max) { this.m_expand = this.randOrTakeFirst(min, max); return this; },
 	angle : function(min, max) { this.m_angle = this.randOrTakeFirst(min, max); return this; },
 	angularVelocity : function(min, max) { this.m_angularVelocity = this.randOrTakeFirst(min, max); return this; },
-	position : function(position) { this.m_position = position; return this; },
-	velocity : function(velocity) { this.m_velocity = velocity; return this; }
+	position : function(pos) { this.m_pos.set( pos.x || 0, pos.y || 0, pos.z || 0); return this; },
+	velocity : function(vel) { this.m_velocity.set( vel.x || 0, vel.y || 0, vel.z || 0); return this; }
 };
 
 // wrap in anonymous function for private variables
@@ -157,17 +141,8 @@ RAPT.Particle = (function() {
 	    var v = n;
 
 	    while(v--){
-	    	//positions[v*3+0] = 9.0;
-	    	//positions[v*3+1] = 32.0;
-	    	//positions[v*3+2] = 0.00001;
-
-	    	colors[v*4+0] = 1.0;
-	    	colors[v*4+1] = 1.0;
-	    	colors[v*4+2] = 1.0;
-	    	colors[v*4+0] = 0.0;
 
 	        sizes[v] = 0.3;
-	        
 	        uvpos[v*2+1] = 1.0;
 	    }
 
@@ -242,15 +217,16 @@ RAPT.Particle = (function() {
 
 			//
 
-			positions[i * 3 + 0] = particles[i].m_position.x.toFixed(3);
-			positions[i * 3 + 1] = particles[i].m_position.y.toFixed(3);
+			positions[i * 3 + 0] = particles[i].m_pos.x.toFixed(3);
+			positions[i * 3 + 1] = particles[i].m_pos.y.toFixed(3);
+			positions[i * 3 + 2] = particles[i].m_pos.z.toFixed(3);
 
 			//if(i===0) console.log(positions[i * 3 + 0], positions[i * 3 + 1]);
 
-			colors[i * 4 + 0] = particles[i].m_red;
-			colors[i * 4 + 1] = particles[i].m_green;
-			colors[i * 4 + 2] = particles[i].m_blue;
-			colors[i * 4 + 3] = particles[i].m_alpha;
+			colors[i * 4 + 0] = particles[i].m_color.x;
+			colors[i * 4 + 1] = particles[i].m_color.y;
+			colors[i * 4 + 2] = particles[i].m_color.z;
+			colors[i * 4 + 3] = particles[i].m_color.w;
 
 			uvpos[i * 2 + 0] = particles[i].m_type*2;
 			angles[i] = particles[i].m_angle;
