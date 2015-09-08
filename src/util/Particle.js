@@ -8,6 +8,7 @@
 //
 // Particle().position(center).color(0.9, 0, 0, 0.5).mixColor(1, 0, 0, 1).gravity(1).triangle()
 // Particle().position(center).velocity(velocity).color(0, 0, 0, 1).gravity(0.4, 0.6).circle()
+var RAPT = RAPT || {};
 
 RAPT.PARTICLE_CIRCLE = 0;
 RAPT.PARTICLE_TRIANGLE = 1;
@@ -113,7 +114,8 @@ RAPT.Particle = (function() {
     //this.scene.add( this.particlesCloud );
 
 	// particles is an array of ParticleInstances where the first count are in use
-	var particles = new Array(3000);
+	//var particles = new Array(3000);
+	var particles = new Array(6000);
 	var maxCount = particles.length;
 	var count = 0;
 	var i = maxCount;

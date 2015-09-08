@@ -237,12 +237,10 @@ RAPT.World3D.prototype = {
         var tmpGeometry = new THREE.Geometry();
         var matrix = new THREE.Matrix4();
         var rmatrix = new THREE.Matrix4();
-        var x, y, type;
-        var j, edges, etype;
+        var x, y, type, j, edges, etype;
         var ne = world.totalEdge;
         var nx = world.cells.length;
         var ny = world.cells[0].length;
-        var name = 'p0'
 
         for (x = 0; x < nx; x++) {
             for (y = 0; y < ny; y++) {

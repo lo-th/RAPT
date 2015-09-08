@@ -39,7 +39,7 @@ RAPT.jumpingKeyframes = [
 RAPT.wallSlidingKeyframe =
 	new RAPT.Keyframe((0.4 - RAPT.PLAYER_WIDTH) / 2, 0).add(0, -10, 150, -130, 140, 50, 50, -30, 50, 130);
 RAPT.crouchingKeyframe =
-	new RAPT.Keyframe(0, -0.2).add(30, -30, 130, -110, -30, 40, 60, -130, 20, 20);
+	new RAPT.Keyframe(0, -0.25).add(30, -30, 130, -110, -30, 40, 60, -130, 20, 20);
 RAPT.fallingKeyframes = [
 	new RAPT.Keyframe(0, 0).add(-20, 5, 10, -30, -120, -30, 40, -20, 120, 30),
 	new RAPT.Keyframe(0, 0).add(-20, 5, 10, -30, -130, -60, 40, -20, 150, 50)
@@ -52,7 +52,6 @@ RAPT.clamberingKeyframes = [
 
 RAPT.Player = function (center, color) {
 
-    //RAPT.Entity.call(this);
 	this.velocity = new RAPT.Vector(0, 0);
 	this._isDead = false;
 	this.reset(center, color);
@@ -61,8 +60,6 @@ RAPT.Player = function (center, color) {
 
 
 }
-
-//RAPT.Player.prototype = new RAPT.Entity;
 
 RAPT.Player.prototype = {
 	constructor: RAPT.Player,
@@ -126,7 +123,7 @@ RAPT.Player.prototype = {
 
 	reset : function(center, color) {
 		
-		if(this.sprite)this.sprite.remove();
+		if(this.sprite) this.sprite.remove();
 
 		this._isDead = false;
 		// keys (will be set automatically)
@@ -245,20 +242,17 @@ RAPT.Player.prototype = {
 	},
 	tickPhysics : function(seconds) {
 		// if we hit something, stop the boost
-		if(this.lastContact != null)
-		{
+		if(this.lastContact != null){
 			this.boostMagnitude = 0;
 			this.boostTime = 0;
 		}
 
 		// if we're not in a boost, decrease the boost magnitude
 		this.boostTime -= seconds;
-		if(this.boostTime < 0)
-			this.boostMagnitude *= Math.pow(0.1, seconds);
+		if(this.boostTime < 0) this.boostMagnitude *= Math.pow(0.1, seconds);
 
 		// if we hit something or fall down, turn super jumping off
-		if(this.lastContact != null || this.velocity.y < 0)
-			this.isSuperJumping = false;
+		if(this.lastContact != null || this.velocity.y < 0) this.isSuperJumping = false;
 
 		// move the player horizontally
 		var moveLeft = (this.leftKey && !this.rightKey && !this.crouchKey);
