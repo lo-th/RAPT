@@ -11,6 +11,14 @@ canvas { position: absolute; top:0; left:0; pointer-events:auto; width:100%; hei
 #list { position:absolute; bottom:10px; left:50px; width:100%; height:16px; }
 #message { font-size:14px; position:absolute; top:10px; left:10px; width:400px; height:200px; }
 #debug {position:absolute; bottom:10px; left:10px; width:100px; height:12px; pointer-events:none; }
+#ribbon{
+    position: absolute; top:-50px; right:48px;
+    width:30px; height:200px; background:none; 
+    pointer-events:auto; cursor:pointer;
+    -ms-transform: rotate(-45deg);
+    -webkit-transform: rotate(-45deg);
+    transform: rotate(-45deg);
+}
 </style>
 
 <!-- 3D libs -->
@@ -29,6 +37,7 @@ canvas { position: absolute; top:0; left:0; pointer-events:auto; width:100%; hei
 <script src="src/util/SpriteGroup.js"></script>
 <script src="src/util/Shader.js"></script>
 <script src="src/util/Keyframe.js"></script>
+<script src="src/util/Gamepad.js"></script>
 
 <!-- game world -->
 <script src="src/world/cell.js"></script>
@@ -75,11 +84,12 @@ canvas { position: absolute; top:0; left:0; pointer-events:auto; width:100%; hei
 <div id="list"></div>
 <div id="debug"></div>
 <div id="message">RAPT v0.1</div>
-<a href="https://github.com/lo-th/RAPT"><img style="position: absolute; top: 0; right: 0; border: 0;" src="textures/ribbon.png"></a>
-
+<img style="position: absolute; top: 0; right: 0; border: 0;" src="textures/ribbon.png"></a>
+<a id="ribbon" href="https://github.com/lo-th/Liquid.lab"></a>
 <script type="text/javascript">
 
 var fps = 1e3/120, game, w3d, current = 0, isApart = true;
+var gamepad = null;
 var interval = null;
 
 window.onload = loadAsset;
@@ -90,8 +100,10 @@ function loadAsset() {
 
 function initGame() {
 
+
     w3d = new RAPT.World3D( document.getElementById( 'canvas' ));
     game = new RAPT.Game( document.getElementById( 'message' ));
+    gamepad = new RAPT.Gamepad();
 
     initList();
     game.load(RAPT.LEVELS[current]);
@@ -139,6 +151,7 @@ function tick() {
     game.tick();
 };
 function animateOnly() {
+    gamepad.tick();
     w3d.render();
     requestAnimationFrame( animateOnly );
 };

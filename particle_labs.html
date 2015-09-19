@@ -126,6 +126,7 @@ function init() {
     scene.add( helper );
    
     RAPT.Particle.init3d( scene, THREE.ImageUtils.loadTexture( 'textures/particle.png' ) );
+    //RAPT.Particle.init3d( scene, THREE.ImageUtils.loadTexture( 'textures/explosion_1_38_128_corrected.png' ) );
 
     window.addEventListener( 'resize', onWindowResize, false );
 
@@ -169,6 +170,7 @@ var basic = [
 '        velocity = new THREE.Vector3(Math.cos(angle), Math.sin(angle), 0).multiplyScalar(distance);',
 '        RAPT.Particle()',
 '            .type("triangle")// triangle, circle, line, custom',
+//'            .animuv()',
 '            .position(new THREE.Vector3())',
 '            .velocity(velocity)',
 '            .radius(0.01, 0.1)',

@@ -38,9 +38,22 @@ RAPT.ParticleInstance.prototype = {
 		this.m_angle = 0;
 		this.m_angularVelocity = 0;
 		this.m_drawFunc = null;
+
+		this.ntiles = 8;
+		this.m_animuv = false;
 	},
 	tick : function(seconds) {
+
 		if(this.m_bounces < 0)  return false;
+
+		if(this.m_animuv){
+			this.m_uvpos.x ++;
+			if(this.m_uvpos.x>this.ntiles){
+				this.m_uvpos.x = 0;
+				this.m_uvpos.y ++;
+				if(this.m_uvpos.y>this.ntiles) this.m_uvpos.y = 0;
+			}
+		}
 
 		this.m_color.w *= Math.pow(this.m_decay, seconds);// alpha
 		this.m_radius *= Math.pow(this.m_expand, seconds);
@@ -49,10 +62,13 @@ RAPT.ParticleInstance.prototype = {
 		if(this.m_gravity.y!==0)this.m_velocity.y -= this.m_gravity.y * seconds;
 		if(this.m_gravity.z!==0)this.m_velocity.z -= this.m_gravity.z * seconds;
 		//this.m_velocity.sub(this.m_gravity.clone().multiplyScalar(seconds));
-		this.m_pos.add(this.m_velocity.clone().multiplyScalar(seconds));
+		//this.m_pos.add(this.m_velocity.clone().multiplyScalar(seconds));
+		this.m_pos.x += this.m_velocity.x * seconds;
+		this.m_pos.y += this.m_velocity.y * seconds;
+		this.m_pos.z += this.m_velocity.z * seconds;
 		
 		this.m_angle += this.m_angularVelocity * seconds;
-		if(this.m_alpha < 0.05) this.m_bounces = -1;
+		//if(this.m_alpha < 0.05) this.m_bounces = -1;
 		if(this.m_color.w < 0.05) this.m_bounces = -1;
 		return (this.m_bounces >= 0);
 	},
@@ -83,6 +99,8 @@ RAPT.ParticleInstance.prototype = {
 		this.m_uvpos.set(x,y);
 		return this;
 	},
+	setuv:function(x,y){this.m_uvpos.set(x,y); return this;},
+	animuv: function(){ this.m_animuv=true; return this;},
 	circle : function() { this.m_type = RAPT.PARTICLE_CIRCLE; return this; },
 	triangle : function() { this.m_type = RAPT.PARTICLE_TRIANGLE; return this; },
 	line : function() { this.m_type = RAPT.PARTICLE_LINE; return this; },
@@ -146,6 +164,15 @@ RAPT.Particle = (function() {
 		geometry = new THREE.BufferGeometry();
 		var n = 3000;
 
+		var blending = THREE.AdditiveBlending;
+		
+		/*THREE.NoBlending
+		THREE.NormalBlending
+		THREE.AdditiveBlending
+		THREE.SubtractiveBlending
+		THREE.MultiplyBlending
+		THREE.CustomBlending*/
+
 		positions = new Float32Array( n * 3 );
 	    uvpos = new Float32Array( n * 2 );
 	    colors = new Float32Array( n * 4 );
@@ -171,11 +198,13 @@ RAPT.Particle = (function() {
 			uniforms:{
 			    ntiles :  { type: 'f', value: 8.0 },
 			    scale :  { type: 'f', value: 800.0 },
-			    map: { type: 't', value: null }
+			    map: { type: 't', value: null },
+			    alphaTest : { type:'f', value: 0.0 }
 			},
 			fragmentShader:[
 			    'uniform sampler2D map;',
 			    'uniform float ntiles;',
+			    'uniform float alphaTest;',
 			    'varying vec4 vColor;',
 			    'varying vec2 vPos;',
 			    'varying float vAngle;',
@@ -190,6 +219,7 @@ RAPT.Particle = (function() {
 			    '    vec2 coord = tileUV(uv, vPos, ntiles);',
 			    '    vec4 texture = texture2D( map, coord );',
 			    '    gl_FragColor = texture * vColor;',
+			    '    if ( gl_FragColor.a <= alphaTest ) discard;',
 			    '}'
 			].join('\n'),
 			vertexShader:[    
@@ -215,7 +245,8 @@ RAPT.Particle = (function() {
 	        //vertexColors:   THREE.VertexColors,
 	        depthTest: false,
 	        depthWrite: true,
-	        transparent: true
+	        transparent: true,
+	        blending:blending
 	    });
 
         particleMaterial.uniforms.map.value = mapping;
