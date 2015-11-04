@@ -4,13 +4,13 @@ RAPT.lerp = function (a, b, percent) { return a + (b - a) * percent; }
 RAPT.randInRange = function (a, b) { return RAPT.lerp(a, b, RAPT.random()); }
 RAPT.randInt = function (a, b, n) { return RAPT.lerp(a, b, RAPT.random()).toFixed(n || 0)*1;}
 
-RAPT.PI = Math.PI;
-RAPT.PI90 = RAPT.PI*0.5;
-RAPT.PI270 = RAPT.PI+RAPT.PI90;
-RAPT.TwoPI = 2.0 * RAPT.PI;
+RAPT.PI    = 3.141592653589793;
+RAPT.PI90  = 1.570796326794896;
+RAPT.PI270 = 4.712388980384689;
+RAPT.TwoPI = 6.283185307179586;
 
-RAPT.ToRad = RAPT.PI / 180;
-RAPT.ToDeg = 180 / RAPT.PI;
+RAPT.ToRad = 0.0174532925199432957;
+RAPT.ToDeg = 57.295779513082320876;
 
 
 RAPT.adjustAngleToTarget = function (currAngle, targetAngle, maxRotation) {

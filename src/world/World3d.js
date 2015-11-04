@@ -2,6 +2,8 @@ RAPT.W3D = null;
 RAPT.MAT_PLAYER = null;
 RAPT.GEO = {};
 
+var debug = debug || null;
+
 RAPT.Loader = function(file, callback){
     var loader = new THREE.SEA3D( { 
         //parser : THREE.SEA3D.DEFAULT 
@@ -20,6 +22,12 @@ RAPT.Loader = function(file, callback){
 };
 
 RAPT.World3D = function(canvas){
+
+    this.isMobile = false;
+    this.antialias = true;
+
+    var n = navigator.userAgent;
+    if (n.match(/Android/i) || n.match(/webOS/i) || n.match(/iPhone/i) || n.match(/iPad/i) || n.match(/iPod/i) || n.match(/BlackBerry/i) || n.match(/Windows Phone/i)){ this.isMobile = true;  this.antialias = false; }
 
     this.debug = document.getElementById( 'debug' );
     this.vs = {w:window.innerWidth, h:window.innerHeight, r:.0084, mw:0, mh:0, d:10, fov:60};
@@ -82,7 +90,7 @@ RAPT.World3D = function(canvas){
     this.doors = [];
     this.sprites = [];
 
-    this.renderer = new THREE.WebGLRenderer( { precision:"mediump", canvas:canvas, antialias: true,  alpha: false } );
+    this.renderer = new THREE.WebGLRenderer( { precision:"mediump", canvas:canvas, antialias: this.antialias,  alpha: false } );
     this.renderer.setPixelRatio( window.devicePixelRatio );
     this.renderer.setSize( this.vs.w, this.vs.h );
     this.renderer.setClearColor( 0x737373 , 1.0);
@@ -93,7 +101,7 @@ RAPT.World3D = function(canvas){
     RAPT.W3D = this;
 
     //var _this = this;
-    canvas.onmousewheel = function(e) {RAPT.W3D.onMouseWheel(e)};
+    canvas.onmousewheel = function(e) { RAPT.W3D.onMouseWheel(e); };
 };
 
 RAPT.World3D.prototype = {
@@ -302,9 +310,8 @@ RAPT.World3D.prototype = {
         this.scene.add(this.edgemesh);
 
     },
-    
     tell:function(txt){
-        debug.innerHTML = txt;
+        if(debug!==null) debug.innerHTML = txt;
     },
     upCamera:function(x,y,id){
         this.camera[id].position.set(x, y, this.vs.d);
@@ -324,8 +331,8 @@ RAPT.World3D.prototype = {
         else this.renderer.setSize(this.vs.w,this.vs.h);
     },
     updateCamera:function(){
-        var rz = this.vs.w/this.vs.h;
-        i = this.camera.length;
+        var rz = this.vs.w / this.vs.h;
+        var i = this.camera.length, c;
         while(i--){
             c = this.camera[i];
             if(this.is2D){

@@ -94,7 +94,7 @@ RAPT.Player.prototype = {
 	//onRespawn : function() {},
 	add3d: function(){
 		var uvs = [[0,0], [0,1], [1,0], [1,1], [2, 0], [2,1], [1,0], [1,1], [2, 0], [2,1], [3,2]];
-		if(this.color==1) var uvs = [[0,2], [0,3], [1,2], [1,3], [2, 2], [2,3], [1,2], [1,3], [2, 2], [2,3], [3,2]];
+		if(this.color==1) uvs = [[0,2], [0,3], [1,2], [1,3], [2, 2], [2,3], [1,2], [1,3], [2, 2], [2,3], [3,2]];
 		this.sprite = new RAPT.SpriteGroup({
 
 			name:'player'+ this.color,

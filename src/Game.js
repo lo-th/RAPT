@@ -18,8 +18,9 @@
   };
 }*/
 
+var THREE;
 
-
+var playNext = playNext || null;
 
 var RAPT = RAPT || {};
 

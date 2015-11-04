@@ -9,7 +9,6 @@
 // Particle().position(center).color(0.9, 0, 0, 0.5).mixColor(1, 0, 0, 1).gravity(1).triangle()
 // Particle().position(center).velocity(velocity).color(0, 0, 0, 1).gravity(0.4, 0.6).circle()
 
-var RAPT = RAPT || {};
 
 RAPT.PARTICLE_CIRCLE = 0;
 RAPT.PARTICLE_TRIANGLE = 1;
@@ -121,8 +120,12 @@ RAPT.ParticleInstance.prototype = {
 
 // wrap in anonymous function for private variables
 RAPT.Particle = (function() {
+
+	var particleMaterial = null;
 	var geometry = null;
 	var positions = null;
+	var angles = null;
+	var sizes = null;
 	var uvpos = null;
 	var colors = null;
 	var values_size = null;
@@ -193,7 +196,7 @@ RAPT.Particle = (function() {
 	    geometry.addAttribute( 'angle', new THREE.BufferAttribute( angles, 1 ) );
 	    geometry.addAttribute( 'size', new THREE.BufferAttribute( sizes, 1 ) );
 
-		var particleMaterial = new THREE.ShaderMaterial( {
+		particleMaterial = new THREE.ShaderMaterial( {
 	        //attributes:[ 'size', 'colors', 'uvPos', 'angle' ],
 			uniforms:{
 			    ntiles :  { type: 'f', value: 8.0 },

@@ -35,8 +35,8 @@ RAPT.World.prototype = {
 		return (x >= 0 && y >= 0 && x < this.width && y < this.height) ? this.cells[x][y].ne : 0;
 	},
 	setCellNE : function(x, y, v) {
-		c = this.getCell(x,y);
-		if(c!==null)c.ne = v;
+		var c = this.getCell(x,y);
+		if(c!==null) c.ne = v;
 	},
 	// cells outside the world return null
 	getCell : function(x, y) {

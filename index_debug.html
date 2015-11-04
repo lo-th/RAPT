@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>RAPT</title>
+<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+<style>
+*{ padding:0; margin: 0; -o-user-select:none; -ms-user-select:none; -khtml-user-select:none; -webkit-user-select:none; -moz-user-select: none;}
+html { width:100%; height:100%; }
+body {  font-family: Monospace; font-size:11px; width:100%; height:100%; color:#FFFFFF; overflow: hidden; margin:0; padding:0; background:#737373; text-shadow: 0.5px 0.5px 2px #000000;}
+canvas { position: absolute; top:0; left:0; pointer-events:auto; width:100%; height:100%;}
+#list { position:absolute; bottom:10px; left:50px; width:100%; height:16px; }
+#message { font-size:14px; position:absolute; top:10px; left:10px; width:400px; height:200px; }
+#debug {position:absolute; bottom:10px; left:10px; width:100px; height:12px; pointer-events:none; }
+#ribbon{
+    position: absolute; top:-50px; right:48px;
+    width:30px; height:200px; background:none; 
+    pointer-events:auto; cursor:pointer;
+    -ms-transform: rotate(-45deg);
+    -webkit-transform: rotate(-45deg);
+    transform: rotate(-45deg);
+}
+</style>
+
+<!-- 3D libs -->
+<script src="js/three.min.js"></script>
+<script src="js/Gamepad.js"></script>
+<script src="js/sea3d/SEA3D.js"></script>
+<script src="js/sea3d/SEA3DLZMA.js"></script>
+<script src="js/sea3d/SEA3DLoader.js"></script>
+
+<!-- game root -->
+<script src="src/Game.js"></script>
+
+<!-- utils -->
+<script src="src/util/Math.js"></script>
+<script src="src/util/Physics.js"></script>
+<script src="src/util/Particle.js"></script>
+<script src="src/util/SpriteGroup.js"></script>
+<script src="src/util/Shader.js"></script>
+<script src="src/util/Keyframe.js"></script>
+
+<!-- game world -->
+<script src="src/world/cell.js"></script>
+<script src="src/world/door.js"></script>
+<script src="src/world/edge.js"></script>
+<script src="src/world/gamestate.js"></script>
+<script src="src/world/world.js"></script>
+<script src="src/world/enemy.js"></script>
+<script src="src/world/player.js"></script>
+<script src="src/world/World3d.js"></script>
+
+<!-- enemy -->
+<script src="src/enemy/rocket.js"></script>
+<script src="src/enemy/bomb.js"></script>
+<script src="src/enemy/bomber.js"></script>
+<script src="src/enemy/bouncyrocket.js"></script>
+<script src="src/enemy/bouncyrocketlauncher.js"></script>
+<script src="src/enemy/corrosioncloud.js"></script>
+<script src="src/enemy/doommagnet.js"></script>
+<script src="src/enemy/doorbell.js"></script>
+<script src="src/enemy/goldencog.js"></script>
+<script src="src/enemy/grenade.js"></script>
+<script src="src/enemy/grenadier.js"></script>
+<script src="src/enemy/headache.js"></script>
+<script src="src/enemy/helpsign.js"></script>
+<script src="src/enemy/hunter.js"></script>
+<script src="src/enemy/jetstream.js"></script>
+<script src="src/enemy/laser.js"></script>
+<script src="src/enemy/multigun.js"></script>
+<script src="src/enemy/popper.js"></script>
+<script src="src/enemy/riotbullet.js"></script>
+<script src="src/enemy/rocketspider.js"></script>
+<script src="src/enemy/rocketspiderlegs.js"></script>
+<script src="src/enemy/shockhawk.js"></script>
+<script src="src/enemy/spikeball.js"></script>
+<script src="src/enemy/stalacbat.js"></script>
+<script src="src/enemy/wallavoider.js"></script>
+<script src="src/enemy/wallcrawler.js"></script>
+<script src="src/enemy/wheeligator.js"></script>
+
+</head>
+<body>
+<canvas id="canvas"></canvas>
+<div id="list"></div>
+<div id="debug"></div>
+<div id="message">RAPT v0.1</div>
+<img style="position: absolute; top: 0; right: 0; border: 0;" src="textures/ribbon.png"></a>
+<a id="ribbon" href="https://github.com/lo-th/Liquid.lab"></a>
+<script type="text/javascript">
+
+var fps = 1e3/120, game, w3d, current = 0, isApart = true;
+var gamepad = null;
+var interval = null;
+
+window.onload = loadAsset;
+
+function loadAsset() {
+    var load = new RAPT.Loader('models/rapt.sea', initGame);
+};
+
+function initGame() {
+
+
+    w3d = new RAPT.World3D( document.getElementById( 'canvas' ));
+    game = new RAPT.Game( document.getElementById( 'message' ));
+    gamepad = new Gamepad();
+
+    initList();
+    game.load(RAPT.LEVELS[current]);
+
+    if(isApart){
+        interval = setInterval(tick, fps);
+        animateOnly();
+    } else {
+        animate();
+    }
+};
+
+function playNext(){
+    current++;
+    if(current == RAPT.LEVELS.length) current = 0;
+    game.load(RAPT.LEVELS[current]);
+};
+
+function initList(){
+    var list = document.getElementById('list');
+    var bStyle = " width:12px; height:12px; cursor:pointer; border:1px solid #444; background:#666; text-align:center; padding:2px; margin:2px; display:inline-block; "
+    for(var i = 0;i<RAPT.LEVELS.length; i++){
+        var b = document.createElement('div');
+        b.style.cssText = bStyle;
+        b.name = i;
+        b.innerHTML = i;//b.name;
+        b.addEventListener('click',  function ( e ) {  game.load( RAPT.LEVELS[this.name] );  e.preventDefault();}, false);
+        b.addEventListener('mouseover',  function ( e ) {  this.style.background= '#FF8800'; document.getElementById( 'message' ).innerHTML = RAPT.LEVELS[this.name]; }, false);
+        b.addEventListener('mouseout',  function ( e ) {  this.style.background= '#666';}, false);
+        list.appendChild( b );
+    }
+};
+
+window.onresize = function(e) {
+    w3d.resize();
+    game.resize();
+};
+
+document.onkeydown = function(e) {  e = e || window.event; game.keyDown(e); };
+document.onkeyup = function(e) { e = e || window.event; game.keyUp(e); };
+
+// -----------------------------
+
+function tick() {
+    game.tick();
+};
+function animateOnly() {
+    //gamepad.update();
+
+    w3d.render();
+    requestAnimationFrame( animateOnly );
+};
+
+// ----------------------------
+
+function animate() {
+    game.tick();
+    
+    //game.update();
+    w3d.render();
+    requestAnimationFrame( animate );
+};
+
+
+var hidden, vchange;
+if (typeof document.hidden !== "undefined") {
+    hidden = "hidden";
+    vchange = "visibilitychange";
+    //visibilityState = "visibilityState";
+} else if (typeof document.mozHidden !== "undefined") {
+    hidden = "mozHidden";
+    vchange = "mozvisibilitychange";
+    //visibilityState = "mozVisibilityState";
+} else if (typeof document.msHidden !== "undefined") {
+    hidden = "msHidden";
+    vchange = "msvisibilitychange";
+    //visibilityState = "msVisibilityState";
+} else if (typeof document.webkitHidden !== "undefined") {
+    hidden = "webkitHidden";
+    vchange = "webkitvisibilitychange";
+    //visibilityState = "webkitVisibilityState";
+}
+
+document.addEventListener(vchange, gamepause, false);
+
+function gamepause() {
+    if(document[hidden]) game.makePause();
+    else game.stopPause();
+  //log.innerHTML += 'Le document est caché ? '+document[hidden]+'<br>';
+  //log.innerHTML += 'Etat : '+document[visibilityState]+'<br>';
+}
+
+</script>
+</body>
+</html>

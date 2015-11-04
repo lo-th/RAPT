@@ -21,62 +21,15 @@ canvas { position: absolute; top:0; left:0; pointer-events:auto; width:100%; hei
 }
 </style>
 
+
 <!-- 3D libs -->
 <script src="js/three.min.js"></script>
+<script src="js/Gamepad.js"></script>
 <script src="js/sea3d/SEA3D.js"></script>
 <script src="js/sea3d/SEA3DLZMA.js"></script>
 <script src="js/sea3d/SEA3DLoader.js"></script>
-
-<!-- game root -->
-<script src="src/Game.js"></script>
-
-<!-- utils -->
-<script src="src/util/Math.js"></script>
-<script src="src/util/Physics.js"></script>
-<script src="src/util/Particle.js"></script>
-<script src="src/util/SpriteGroup.js"></script>
-<script src="src/util/Shader.js"></script>
-<script src="src/util/Keyframe.js"></script>
-<script src="src/util/Gamepad.js"></script>
-
-<!-- game world -->
-<script src="src/world/cell.js"></script>
-<script src="src/world/door.js"></script>
-<script src="src/world/edge.js"></script>
-<script src="src/world/gamestate.js"></script>
-<script src="src/world/world.js"></script>
-<script src="src/world/enemy.js"></script>
-<script src="src/world/player.js"></script>
-<script src="src/world/World3d.js"></script>
-
-<!-- enemy -->
-<script src="src/enemy/rocket.js"></script>
-<script src="src/enemy/bomb.js"></script>
-<script src="src/enemy/bomber.js"></script>
-<script src="src/enemy/bouncyrocket.js"></script>
-<script src="src/enemy/bouncyrocketlauncher.js"></script>
-<script src="src/enemy/corrosioncloud.js"></script>
-<script src="src/enemy/doommagnet.js"></script>
-<script src="src/enemy/doorbell.js"></script>
-<script src="src/enemy/goldencog.js"></script>
-<script src="src/enemy/grenade.js"></script>
-<script src="src/enemy/grenadier.js"></script>
-<script src="src/enemy/headache.js"></script>
-<script src="src/enemy/helpsign.js"></script>
-<script src="src/enemy/hunter.js"></script>
-<script src="src/enemy/jetstream.js"></script>
-<script src="src/enemy/laser.js"></script>
-<script src="src/enemy/multigun.js"></script>
-<script src="src/enemy/popper.js"></script>
-<script src="src/enemy/riotbullet.js"></script>
-<script src="src/enemy/rocketspider.js"></script>
-<script src="src/enemy/rocketspiderlegs.js"></script>
-<script src="src/enemy/shockhawk.js"></script>
-<script src="src/enemy/spikeball.js"></script>
-<script src="src/enemy/stalacbat.js"></script>
-<script src="src/enemy/wallavoider.js"></script>
-<script src="src/enemy/wallcrawler.js"></script>
-<script src="src/enemy/wheeligator.js"></script>
+<!-- rapt game root -->
+<script src="build/rapt.min.js"></script>
 
 </head>
 <body>
@@ -103,7 +56,7 @@ function initGame() {
 
     w3d = new RAPT.World3D( document.getElementById( 'canvas' ));
     game = new RAPT.Game( document.getElementById( 'message' ));
-    gamepad = new RAPT.Gamepad();
+    gamepad = new Gamepad();
 
     initList();
     game.load(RAPT.LEVELS[current]);
@@ -151,7 +104,8 @@ function tick() {
     game.tick();
 };
 function animateOnly() {
-    gamepad.tick();
+    //gamepad.update();
+
     w3d.render();
     requestAnimationFrame( animateOnly );
 };
@@ -160,6 +114,7 @@ function animateOnly() {
 
 function animate() {
     game.tick();
+    
     //game.update();
     w3d.render();
     requestAnimationFrame( animate );

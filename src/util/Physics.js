@@ -390,7 +390,7 @@ RAPT.CollisionDetector.prototype = {
 		var i;
 
 		// for each side of the polygon, check the edge's endpoints for a collision
-        var i = polygon.vertices.length;
+        i = polygon.vertices.length;
         while(i--){
 
 			var edgeEndpoints = [segment.start, segment.end];
