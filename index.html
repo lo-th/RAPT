@@ -24,10 +24,10 @@ canvas { position: absolute; top:0; left:0; pointer-events:auto; width:100%; hei
 
 <!-- 3D libs -->
 <script src="js/three.min.js"></script>
-<script src="js/Gamepad.js"></script>
-<script src="js/sea3d/SEA3D.js"></script>
+<script src="js/gamepad.js"></script>
+<!--<script src="js/sea3d/SEA3D.js"></script>
 <script src="js/sea3d/SEA3DLZMA.js"></script>
-<script src="js/sea3d/SEA3DLoader.js"></script>
+<script src="js/sea3d/SEA3DLoader.js"></script>-->
 <!-- rapt game root -->
 <script src="build/rapt.min.js"></script>
 
@@ -45,11 +45,7 @@ var fps = 1e3/120, game, w3d, current = 0, isApart = true;
 var gamepad = null;
 var interval = null;
 
-window.onload = loadAsset;
-
-function loadAsset() {
-    var load = new RAPT.Loader('models/rapt.sea', initGame);
-};
+window.onload = initGame;
 
 function initGame() {
 
@@ -145,8 +141,6 @@ document.addEventListener(vchange, gamepause, false);
 function gamepause() {
     if(document[hidden]) game.makePause();
     else game.stopPause();
-  //log.innerHTML += 'Le document est caché ? '+document[hidden]+'<br>';
-  //log.innerHTML += 'Etat : '+document[visibilityState]+'<br>';
 }
 
 </script>

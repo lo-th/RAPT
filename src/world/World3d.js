@@ -4,7 +4,7 @@ RAPT.GEO = {};
 
 var debug = debug || null;
 
-RAPT.Loader = function(file, callback){
+/*RAPT.Loader = function(file, callback){
     var loader = new THREE.SEA3D( { 
         //parser : THREE.SEA3D.DEFAULT 
         //container : null
@@ -14,14 +14,22 @@ RAPT.Loader = function(file, callback){
         while(i--){
             m = loader.meshes[i];
             RAPT.GEO[m.name] = m.geometry;
+
+
+            //console.log(m.geometry.index.array);
         }
         callback();
     };
 
     loader.load( file );
-};
+};*/
 
 RAPT.World3D = function(canvas){
+
+    // test direct geometry
+    RAPT.GEO[RAPT.door0.name] = new THREE.CustomGeometry(RAPT.door0);
+    RAPT.GEO[RAPT.door1.name] = new THREE.CustomGeometry(RAPT.door1);
+    RAPT.GEO[RAPT.door2.name] = new THREE.CustomGeometry(RAPT.door2);
 
     this.isMobile = false;
     this.antialias = true;

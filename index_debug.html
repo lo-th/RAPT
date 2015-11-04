@@ -23,10 +23,10 @@ canvas { position: absolute; top:0; left:0; pointer-events:auto; width:100%; hei
 
 <!-- 3D libs -->
 <script src="js/three.min.js"></script>
-<script src="js/Gamepad.js"></script>
-<script src="js/sea3d/SEA3D.js"></script>
+<script src="js/gamepad.js"></script>
+<!--<script src="js/sea3d/SEA3D.js"></script>
 <script src="js/sea3d/SEA3DLZMA.js"></script>
-<script src="js/sea3d/SEA3DLoader.js"></script>
+<script src="js/sea3d/SEA3DLoader.js"></script>-->
 
 <!-- game root -->
 <script src="src/Game.js"></script>
@@ -47,6 +47,7 @@ canvas { position: absolute; top:0; left:0; pointer-events:auto; width:100%; hei
 <script src="src/world/world.js"></script>
 <script src="src/world/enemy.js"></script>
 <script src="src/world/player.js"></script>
+<script src="src/world/CustomGeometry.js"></script>
 <script src="src/world/World3d.js"></script>
 
 <!-- enemy -->
@@ -92,14 +93,14 @@ var fps = 1e3/120, game, w3d, current = 0, isApart = true;
 var gamepad = null;
 var interval = null;
 
-window.onload = loadAsset;
+window.onload = initGame;
+//loadAsset;
 
-function loadAsset() {
+/*function loadAsset() {
     var load = new RAPT.Loader('models/rapt.sea', initGame);
-};
+};*/
 
 function initGame() {
-
 
     w3d = new RAPT.World3D( document.getElementById( 'canvas' ));
     game = new RAPT.Game( document.getElementById( 'message' ));

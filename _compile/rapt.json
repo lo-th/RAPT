@@ -13,6 +13,7 @@
 	"src/world/world.js",
 	"src/world/enemy.js",
 	"src/world/player.js",
+	"src/world/CustomGeometry.js",
 	"src/world/World3d.js",
 	"src/enemy/rocket.js",
 	"src/enemy/bomb.js",
